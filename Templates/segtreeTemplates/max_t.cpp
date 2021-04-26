@@ -11,6 +11,7 @@ public:
     void up(const max_t& a){ this->val = a.val; }
     void lazy_op(const max_t& a, int l){ up(a); }
     void Print() const { cout << this->val << sp; }
+    void log() const { cerr << this->val << sp; }
 
     max_t operator =(const max_t& a){ this->val = a.val; return *this; }
     bool operator ==(const max_t& a) const { return this->val == a.val; }
