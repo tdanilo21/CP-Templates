@@ -18,6 +18,7 @@ public:
     static ld Area(const Point& a, const Point& b, const Point& c) { return abs((ld)(b.Norm(a)|c.Norm(a)) / (ld)2); }
     void Read(){ cin >> this->x >> this->y; }
     void Print() const { cout << this->x << sp << this->y << en; }
+    void Log() const { cerr << this->x << sp << this->y << endl; }
 };
 class Line{
 public:
@@ -32,4 +33,5 @@ public:
     ll side(const Point& p) const { return sig(this->a*p.x + this->b*p.y - this->c); }
     void Read(){ cin >> this->a >> this->b >> this->c; Norm(); }
     void Print() const { cout << this->a << sp << this->b << sp << this->c << en; }
+    void Log() const { cerr << this->a << sp << this->b << sp << this->c << endl; }
 };
