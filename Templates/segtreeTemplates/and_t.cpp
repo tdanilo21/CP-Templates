@@ -7,7 +7,7 @@ public:
     static and_t null_v(){ return and_t((1LL<<63LL)-1LL); }
 
     static and_t op(const and_t& a, const and_t& b){ return and_t(a.val&b.val); }
-    // It is on set mode
+    // This is currently on set mode.
     void up(const and_t& a){ this->val = a.val; }
     void lazy_op(const and_t& a, int l){ up(a); }
     void Print() const { cout << this->val << sp; }
