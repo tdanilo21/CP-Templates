@@ -7,7 +7,7 @@ public:
     static min_t null_v(){ return min_t(-LINF); }
 
     static min_t op(const min_t& a, const min_t& b){ return min_t(min(a.val, b.val)); }
-    void up(const min_t& a){ this->val += a.val; }
+    void up(const min_t& a){ this->val = a.val; }
     void lazy_op(const min_t& a, int l){ up(a); }
     void Print() const { cout << this->val << sp; }
 
