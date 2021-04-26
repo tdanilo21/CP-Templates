@@ -1,3 +1,4 @@
+#define ll long long
 class or_t{
 public:
     ll val;
