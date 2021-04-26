@@ -4,7 +4,7 @@ public:
     ll val;
 
     min_t(ll val = 0){ this->val = val; }
-    static min_t null_v(){ return min_t(-LINF); }
+    static min_t null_v(){ return min_t(LINF); }
 
     static min_t op(const min_t& a, const min_t& b){ return min_t(min(a.val, b.val)); }
     // This is currently on set mode but it can be on add.
