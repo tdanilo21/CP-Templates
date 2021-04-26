@@ -15,10 +15,10 @@ private:
     }
     T init(int s, int l, int r, auto* arr){
         if (l == r) return this->tree[s] = T(arr[l]);
+        
         int m = (l + r) / 2;
         T a = init(2*s, l, m, arr);
         T b = init(2*s+1, m+1, r, arr);
-
         return this->tree[s] = T::op(a, b);
     }
     T update(int s, int l, int r, int ul, int ur, T x){
