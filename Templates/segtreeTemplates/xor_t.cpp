@@ -7,6 +7,7 @@ public:
     static xor_t null_v(){ return xor_t(0); }
 
     static xor_t op(const xor_t& a, const xor_t& b){ return xor_t(a.val^b.val); }
+    // This is currently on set mode.
     void up(const xor_t& a){ this->val = a.val; }
     void lazy_op(const xor_t& a, int l){ if (l>1) this->val = 0; else up(a); }
     void Print() const { cout << this->val << sp; }
