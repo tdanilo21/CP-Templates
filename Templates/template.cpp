@@ -21,7 +21,7 @@
 #define smin(a, b) a = min(a, b)
 #define smax(a, b) a = max(a, b)
 #define ssort(a, b) if (a < b) swap(a, b)
-#define bitcnt(a) __builtin_popcount(a)
+#define bitcnt(a) __builtin_popcountll(a)
 
 using namespace std;
 
