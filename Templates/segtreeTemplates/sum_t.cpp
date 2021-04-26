@@ -11,6 +11,7 @@ public:
     void up(const sum_t& a){ this->val = a.val; }
     void lazy_op(const sum_t& a, int l){ up(sum_t(a.val * l)); }
     void Print() const { cout << this->val << sp; }
+    void log() const { cerr << this->val << sp; }
 
     sum_t operator =(const sum_t& a){ this->val = a.val; return *this; }
     bool operator ==(const sum_t& a) const { return this->val == a.val; }
