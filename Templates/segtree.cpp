@@ -65,8 +65,8 @@ public:
     void update(int l, int r, auto x) { T y = T(x); update(1, 0, this->n-1, l, r, y); }
     auto query(int l, int r) { if (l>r) return T::null_v().val; return query(1, 0, this->n-1, l, r).val; }
     
-    void PrintTree() const { for (int i = 1; i < 2*this->n; i++) this->tree[i].Print(); cout << endl; }
-    void PrintLazy() const { for (int i = 1; i < 2*this->n; i++) this->lazy[i].Print(); cout << endl; }
+    void PrintTree() const { for (int i = 1; i < 2*this->n; i++) this->tree[i].Print(); cout << en; }
+    void PrintLazy() const { for (int i = 1; i < 2*this->n; i++) this->lazy[i].Print(); cout << en; }
     void logTree() const { for (int i = 1; i < 2*this->n; i++) this->tree[i].log(); cerr << endl; }
     void logLazy() const { for (int i = 1; i < 2*this->n; i++) this->lazy[i].log(); cerr << endl; }
 };
