@@ -31,6 +31,7 @@ ll n, m, d, q, a[mxN];
 
 void Solve(){
 
+
 }
 
 int main(){
@@ -38,6 +39,8 @@ int main(){
     ios::sync_with_stdio(false);
     cin.tie(0); cout.tie(0); cerr.tie(0);
     cout << setprecision(12) << fixed;
+    cerr << setprecision(12) << fixed;
+    cerr << "Started!" << endl;
 
     int t = 1;
     //cin >> t;
