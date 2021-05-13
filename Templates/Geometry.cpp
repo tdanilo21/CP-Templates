@@ -14,6 +14,7 @@ public:
     ll operator|(const Point& a) const { return this->x * a.y - this->y * a.x; }
     static ll dist(const Point& a, const Point& b) { return abs(a.x - b.x) * abs(a.x - b.x) + abs(a.y - b.y) * abs(a.y - b.y); }
     static ll Manhattan(const Point& a, const Point& b) { return abs(a.x - b.x) + abs(a.y - b.y); }
+    // In Orientation a is center point from which we are watching.
     static ll Orientation(const Point& a, const Point& b, const Point& c) { return sig(b.Norm(a)|c.Norm(a)); }
     static ld Area(const Point& a, const Point& b, const Point& c) { return abs((ld)(b.Norm(a)|c.Norm(a)) / (ld)2); }
     void Read(){ cin >> this->x >> this->y; }
