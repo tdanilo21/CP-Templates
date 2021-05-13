@@ -1,4 +1,5 @@
 #define ll long long
+#define sp ' '
 class or_t{
 public:
     ll val;
