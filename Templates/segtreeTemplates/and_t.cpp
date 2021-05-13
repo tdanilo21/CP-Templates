@@ -1,4 +1,5 @@
 #define ll long long
+#define sp ' '
 class and_t{
 public:
     ll val;
