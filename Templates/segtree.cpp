@@ -1,4 +1,5 @@
 #define ll long long
+#define en '\n'
 template<class T>
 class segtree{
 private:
