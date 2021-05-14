@@ -28,4 +28,5 @@ public:
         dfs(u, this->comp[s]);
     }
     int find(int s){ return this->comp[s]; }
+    vector<int> get(){ return comp; }
 };
