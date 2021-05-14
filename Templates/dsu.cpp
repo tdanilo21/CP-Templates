@@ -28,5 +28,16 @@ public:
         dfs(u, this->comp[s]);
     }
     int find(int s){ return this->comp[s]; }
-    vector<int> get(){ return comp; }
+    int clean(){
+        int mp[this->n];
+        memset(mp, 0, sizeof(mp));
+        int m = 0;
+        for (int i = 0; i < this->n; i++)
+            if (this->sz[this->comp[i]])
+                if (!mp[this->comp[i]])
+                    mp[this->comp[i]] = m++;
+        for (int i = 0; i < n; i++)
+            this->comp[i] = mp[this->comp[i]];
+        return m;
+    }
 };
