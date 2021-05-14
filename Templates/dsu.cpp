@@ -22,10 +22,10 @@ public:
         if (comp[s] == comp[u]) return;
         this->g[s].pb(u);
         this->g[u].pb(s);
-        if (sz[comp[s]] < sz[comp[u]]) swap(s, u);
-        sz[comp[s]] += sz[comp[u]];
-        sz[comp[u]] = 0;
-        dfs(u, comp[s]);
+        if (this->sz[this->comp[s]] < this->sz[this->comp[u]]) swap(s, u);
+        this->sz[this->comp[s]] += this->sz[this->comp[u]];
+        this->sz[this->comp[u]] = 0;
+        dfs(u, this->comp[s]);
     }
-    int find(int s){ return comp[s]; }
+    int find(int s){ return this->comp[s]; }
 };
