@@ -63,7 +63,7 @@ public:
     segtree(int n = 0){ init(n); }
     segtree(int n, auto* arr){ init(n); init(1, 0, this->n - 1, arr); }
 
-    void update(int l, int r, auto x) { T y = T(x); update(1, 0, this->n-1, l, r, y); }
+    void update(int l, int r, auto x) { update(1, 0, this->n-1, l, r, T(x)); }
     auto query(int l, int r) { if (l>r) return T::null_v().val; return query(1, 0, this->n-1, l, r).val; }
     
     void PrintTree() const { for (int i = 1; i < 2*this->n; i++) this->tree[i].Print(); cout << en; }
