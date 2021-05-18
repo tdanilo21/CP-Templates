@@ -1,6 +1,6 @@
 // Working version of an implicit segment tree is available in the "Templates" folder,
 // but it does not have lazy propagation.
-// I am looking to add it so that's why it's here.
+// I am developing it so that's why it's here.
 #define ll long long
 template<class T>
 class node{
