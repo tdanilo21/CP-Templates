@@ -11,10 +11,11 @@ public:
     // This is currently on set mode but it can be on add.
     void up(const min_t& a){ this->val = a.val; }
     void lazy_op(const min_t& a, int l){ up(a); }
-    void Print() const { cout << this->val << sp; }
-    void log() const { cerr << this->val << sp; }
 
     min_t operator =(const min_t& a){ this->val = a.val; return *this; }
     bool operator ==(const min_t& a) const { return this->val == a.val; }
     bool operator !=(const min_t& a) const { return this->val != a.val; }
+    
+    void Print() const { cout << this->val << sp; }
+    void log() const { cerr << this->val << sp; }
 };
