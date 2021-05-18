@@ -27,7 +27,7 @@ public:
         this->sz[this->comp[u]] = 0;
         dfs(u, this->comp[s]);
     }
-    int find(int s){ return this->comp[s]; }
+    int find(int s) const { return this->comp[s]; }
     int clean(){
         int mp[this->n];
         memset(mp, 0, sizeof(mp));
