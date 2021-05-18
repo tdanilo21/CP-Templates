@@ -11,10 +11,11 @@ public:
     // This is currently on set mode.
     void up(const xor_t& a){ this->val = a.val; }
     void lazy_op(const xor_t& a, int l){ if (l>1) this->val = 0; else up(a); }
-    void Print() const { cout << this->val << sp; }
-    void log() const { cerr << this->val << sp; }
 
     xor_t operator =(const xor_t& a){ this->val = a.val; return *this; }
     bool operator ==(const xor_t& a) const { return this->val == a.val; }
     bool operator !=(const xor_t& a) const { return this->val != a.val; }
+    
+    void Print() const { cout << this->val << sp; }
+    void log() const { cerr << this->val << sp; }
 };
