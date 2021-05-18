@@ -7,9 +7,9 @@ private:
     vector<T> tree, lazy;
     vector<bool> f;
     void init(int n){
-        this->n = n;
         int t = (int)log2(n);
-        if ((1<<t)^n) this->n = (1<<(t+1));
+        if ((1<<t)^n) t++;
+        this->n = (1<<t);
         this->tree = vector<T>(2 * this->n, T());
         this->lazy = vector<T>(2 * this->n, T());
         this->f = vector<bool>(2 * this->n, 0);
