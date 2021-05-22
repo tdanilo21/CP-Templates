@@ -1,5 +1,5 @@
 // This is a implicit segment tree that I am working on.
-// Working version of an implicit segment tree is available in the "Templates" folder,
+// Working version of it is available in the "Templates" folder,
 // but it does not have lazy propagation.
 // I am developing it so that's why it's here.
 #define ll long long
