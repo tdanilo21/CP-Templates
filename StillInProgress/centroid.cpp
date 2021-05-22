@@ -1,3 +1,7 @@
+// This is centroid template that I am working on.
+// Working version of it is available in the "Templates" folder.
+// I am yet to add generation of centroid tree and ability to traverse it
+// after decomposition so that's why it's here.
 #define pb push_back
 class centroid{
 private:
