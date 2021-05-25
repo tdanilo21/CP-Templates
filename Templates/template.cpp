@@ -7,6 +7,7 @@
 #define se second
 #define en '\n'
 #define sp ' '
+#define tb '\t'
 #define ri(n) int n; cin >> n
 #define rl(n) ll n; cin >> n
 #define rs(s) string s; cin >> s
