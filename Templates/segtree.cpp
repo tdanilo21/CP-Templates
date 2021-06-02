@@ -1,5 +1,8 @@
 #define ll long long
 #define en '\n'
+#define bithigh(a) 64-__builtin_clzll(a)
+#define log(a) bithigh(a)-1
+#define highpow(a) (1<<log(a))
 template<class T>
 class segtree{
 private:
@@ -7,9 +10,8 @@ private:
     vector<T> tree, lazy;
     vector<bool> f;
     void init(int n){
-        int t = (int)log2(n);
-        if ((1<<t)^n) t++;
-        this->n = (1<<t);
+        this->n = n;
+        if (highpow(n)^n) this->n = 2*highpow(n);
         this->tree = vector<T>(2 * this->n, T());
         this->lazy = vector<T>(2 * this->n, T());
         this->f = vector<bool>(2 * this->n, 0);
