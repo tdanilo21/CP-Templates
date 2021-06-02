@@ -23,6 +23,9 @@
 #define smax(a, b) a = max(a, b)
 #define ssort(a, b) if (a < b) swap(a, b)
 #define bitcnt(a) __builtin_popcountll(a)
+#define bithigh(a) 64-__builtin_clzll(a)
+#define log(a) bithigh(a)-1
+#define highpow(a) (1<<log(a))
 
 using namespace std;
 
