@@ -1,4 +1,7 @@
 #define ll long long
+#define bithigh(a) 64-__builtin_clzll(a)
+#define log(a) bithigh(a)-1
+#define highpow(a) (1<<log(a))
 template<class T>
 class node{
 public:
@@ -18,8 +21,7 @@ private:
     node<T>* root;
     void init(ll l, ll r){
         ll n = r-l+1;
-        ll t = (int)log2(n);
-        if ((1<<t)^n) n = 1<<(t+1);
+        if (highpow(n)^n) n = 2*highpow(n);
         this->left = l;
         this->right = l+n-1;
         root = new node<T>(T());
