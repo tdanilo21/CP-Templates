@@ -1,5 +1,6 @@
 // This is a persistent segment tree that I am working on.
 // It's yet to be tested so it is not available as finished version.
+// TODO: default constructor (int n = 0); change the log to bit operator.
 #define ll long long
 template<class T>
 class node{
