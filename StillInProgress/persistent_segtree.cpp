@@ -66,7 +66,7 @@ private:
         return T::op(a, b);
     }
 public:
-    persistent_segtree(int n = 0){ init(n); }
+    persistent_segtree(){}
     persistent_segtree(int n, auto* arr){ init(n, arr); }
     void update(int pos, auto x){ this->roots.pb(new node()); this->timer++; update(this->roots[timer-1], this->roots[timer-2], 0, this->n-1, pos, T(x)); }
     auto query(int l, int r, int t = this->timer){ if (l > r) return T::null_v().val; query(this->roots[t-1], 0, this->n-1, l, r); }
