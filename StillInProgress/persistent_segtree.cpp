@@ -1,6 +1,5 @@
 // This is a persistent segment tree that I am working on.
 // It's yet to be tested so it is not available as finished version.
-// TODO: Fix the pointers to nodes.
 #define ll long long
 template<class T>
 class node{
@@ -23,7 +22,7 @@ private:
         int t = (int)log2(n);
         if ((1<<t)^n) t++;
         this->n = (1<<t);
-        this->roots.pb(new node(T()));
+        this->roots.pb(new node());
         this->timer = 1;
         init(this->roots[0], 0, this->n-1, arr);
     }
@@ -67,8 +66,8 @@ private:
         return T::op(a, b);
     }
 public:
-    persistent_segtree(){}
+    persistent_segtree(int n = 0){ init(n); }
     persistent_segtree(int n, auto* arr){ init(n, arr); }
-    void update(int pos, auto x){ this->roots.pb(new node(T())); this->timer++; update(this->roots[timer-1], this->roots[timer-2], 0, this->n-1, pos, T(x)); }
+    void update(int pos, auto x){ this->roots.pb(new node()); this->timer++; update(this->roots[timer-1], this->roots[timer-2], 0, this->n-1, pos, T(x)); }
     auto query(int l, int r, int t = this->timer){ if (l > r) return T::null_v().val; query(this->roots[t-1], 0, this->n-1, l, r); }
 }
