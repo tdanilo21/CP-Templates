@@ -37,7 +37,7 @@ public:
         this->g[v].pb(u);
         this->_edges_++;
     }
-    void Compute(int root){
+    void Compute(int root = 0){
         if (this->_edges_ < this->n-1){
             cerr << "Constructed tree is not connected!" << endl;
             exit(1);
@@ -59,7 +59,7 @@ public:
         if (!d) return s;
         return GetPar(this->par[s][log(d)], d-highpow(d));
     }
-    int GetLca(int u, int v){
+    int GetLca(int u, int v) const {
 
         if (this->depth[u] > this->depth[v]) swap(u, v);
         v = GetPar(v, this->depth[v] - this->depth[u]);
