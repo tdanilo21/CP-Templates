@@ -1,7 +1,7 @@
 #define pb push_back
 #define bithigh(a) 64-__builtin_clzll(a)
 #define log(a) bithigh(a)-1
-#define highpow2(a) (1<<log(a))
+#define highpow(a) (1<<log(a))
 #define sp ' '
 #define en '\n'
 class lca{
@@ -57,7 +57,7 @@ public:
 
         if (d > this->depth[s]) return -1;
         if (!d) return s;
-        return GetPar(this->par[s][log(d)], d-highpow2(d));
+        return GetPar(this->par[s][log(d)], d-highpow(d));
     }
     int GetLca(int u, int v){
 
