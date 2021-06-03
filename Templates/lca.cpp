@@ -30,7 +30,7 @@ public:
     void add(int u, int v){
         if (!this->_initialized_){
             cerr << "Initialize tree u idiot!" << endl;
-            exit(0);
+            exit(1);
         }
 
         this->g[u].pb(v);
@@ -40,11 +40,11 @@ public:
     void Compute(int root){
         if (this->_edges_ < this->n-1){
             cerr << "Constructed tree is not connected!" << endl;
-            exit(0);
+            exit(1);
         }
         if (this->_edges_ > this->n-1){
             cerr << "Constructed tree has cycles!" << endl;
-            exit(0);
+            exit(1);
         }
 
         dfs(root, -1, 0);
