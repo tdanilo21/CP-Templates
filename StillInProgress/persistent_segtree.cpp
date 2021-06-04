@@ -1,5 +1,7 @@
 // This is a persistent segment tree that I am working on.
-// Working version is available in the "Templates" folder.
+// Working version is available in the "Templates" folder,
+// but it does not have lazy propagation.
+// I am developing it, so that's why it's here.
 #define ll long long
 #define pb push_back
 #define en '\n'
