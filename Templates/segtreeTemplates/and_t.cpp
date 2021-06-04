@@ -10,7 +10,7 @@ public:
     static and_t op(const and_t& a, const and_t& b){ return and_t(a.val&b.val); }
     // This is currently on set mode.
     and_t up(const and_t& a){ return *this = a; }
-    void lazy_op(const and_t& a, int l){ if (l==1) up(a); else up(and_t()); }
+    void lazy_op(const and_t& a, int l){ up(a); }
 
     and_t operator =(const and_t& a){ this->val = a.val; return *this; }
     and_t operator +=(const and_t& a) { this->val += a.val; return *this; }
