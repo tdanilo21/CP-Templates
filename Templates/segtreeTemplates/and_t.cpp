@@ -13,6 +13,10 @@ public:
     void lazy_op(const and_t& a, int l){ if (l==1) up(a); else up(and_t()); }
 
     and_t operator =(const and_t& a){ this->val = a.val; return *this; }
+    and_t operator +=(const and_t& a) { this->val += a.val; return *this; }
+    and_t operator -=(const and_t& a) { this->val -= a.val; return *this; }
+    and_t operator +(const and_t& a) const { return and_t(this->val + a.val); }
+    and_t operator -(const and_t& a) const { return and_t(this->val - a.val); }
     bool operator ==(const and_t& a) const { return this->val == a.val; }
     bool operator !=(const and_t& a) const { return this->val != a.val; }
     
