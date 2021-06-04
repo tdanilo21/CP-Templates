@@ -75,13 +75,24 @@ private:
 public:
     persistent_segtree<T>() {}
     persistent_segtree<T>(int n, auto* arr) { init(n, arr); }
-    void update(int pos, auto x, int t) { assert(t <= this->timer); this->roots.pb(new node<T>()); this->timer++; update(this->roots[this->timer-1], this->roots[t-1], 0, this->n-1, pos, T(x)); }
-    auto query(int l, int r, int t) { if (l > r || t > this->timer) return T::null_v().val; return query(this->roots[t-1], 0, this->n-1, l, r).val; }
+    void update(int pos, auto x, int t = -1) {
+        if (!~t) t = this->timer-1;
+        assert(t < this->timer);
+        this->roots.pb(new node<T>());
+        this->timer++;
+        update(this->roots[this->timer-1], this->roots[t], 0, this->n-1, pos, T(x));
+    }
+    auto query(int l, int r, int t = -1) {
+        if (!~t) t = this->timer-1;
+        assert(t < this->timer);
+        if (l > r) return T::null_v().val;
+        return query(this->roots[t], 0, this->n-1, l, r).val;
+    }
 
     void Print(int t) const {
-        assert(t <= this->timer);
+        assert(t < this->timer);
         queue<node<T>*> q;
-        q.push(this->roots[t-1]);
+        q.push(this->roots[t]);
         while (q.size()) {
             node<T>* s = q.front(); q.pop();
             s->Print();
@@ -93,9 +104,9 @@ public:
         cout << en;
     }
     void log(int t) const {
-        assert(t <= this->timer);
+        assert(t < this->timer);
         queue<node<T>*> q;
-        q.push(this->roots[t-1]);
+        q.push(this->roots[t]);
         while (q.size()) {
             node<T>* s = q.front(); q.pop();
             s->log();
