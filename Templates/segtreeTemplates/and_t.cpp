@@ -9,8 +9,8 @@ public:
 
     static and_t op(const and_t& a, const and_t& b){ return and_t(a.val&b.val); }
     // This is currently on set mode.
-    void up(const and_t& a){ this->val = a.val; }
-    void lazy_op(const and_t& a, int l){ up(a); }
+    and_t up(const and_t& a){ return *this = a; }
+    void lazy_op(const and_t& a, int l){ if (l==1) up(a); else up(and_t()); }
 
     and_t operator =(const and_t& a){ this->val = a.val; return *this; }
     bool operator ==(const and_t& a) const { return this->val == a.val; }
