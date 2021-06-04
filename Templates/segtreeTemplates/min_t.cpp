@@ -1,5 +1,6 @@
 #define ll long long
 #define sp ' '
+const ll LINF = 4e18;
 class min_t{
 public:
     ll val;
@@ -9,10 +10,14 @@ public:
 
     static min_t op(const min_t& a, const min_t& b){ return min_t(min(a.val, b.val)); }
     // This is currently on set mode but it can be on add.
-    void up(const min_t& a){ this->val = a.val; }
+    min_t up(const min_t& a){ return *this = a; }
     void lazy_op(const min_t& a, int l){ up(a); }
 
     min_t operator =(const min_t& a){ this->val = a.val; return *this; }
+    min_t operator +=(const min_t& a) { this->val += a.val; return *this; }
+    min_t operator -=(const min_t& a) { this->val -= a.val; return *this; }
+    min_t operator +(const min_t& a) const { return min_t(this->val + a.val); }
+    min_t operator -(const min_t& a) const { return min_t(this->val - a.val); }
     bool operator ==(const min_t& a) const { return this->val == a.val; }
     bool operator !=(const min_t& a) const { return this->val != a.val; }
     
