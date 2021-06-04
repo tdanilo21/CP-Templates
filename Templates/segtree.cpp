@@ -1,8 +1,8 @@
 #define ll long long
 #define en '\n'
 #define bithigh(a) 64-__builtin_clzll(a)
-#define log(a) bithigh(a)-1
-#define highpow(a) (1<<log(a))
+int log(ll a) { return bithigh(a) - 1; }
+ll highpow(ll a) { return 1LL << (ll)log(a); }
 template<class T>
 class segtree{
 private:
@@ -16,12 +16,12 @@ private:
         this->lazy = vector<T>(2 * this->n, T());
         this->f = vector<bool>(2 * this->n, 0);
     }
-    T init(int s, int l, int r, auto* arr){
+    T build(int s, int l, int r, auto* arr){
         if (l == r) return this->tree[s] = T(arr[l]);
         
         int m = (l + r) / 2;
-        T a = init(2*s, l, m, arr);
-        T b = init(2*s+1, m+1, r, arr);
+        T a = build(2*s, l, m, arr);
+        T b = build(2*s+1, m+1, r, arr);
         return this->tree[s] = T::op(a, b);
     }
     T update(int s, int l, int r, int ul, int ur, T x){
@@ -63,7 +63,7 @@ private:
     }
 public:
     segtree(int n = 0){ init(n); }
-    segtree(int n, auto* arr){ init(n); init(1, 0, this->n - 1, arr); }
+    segtree(int n, auto* arr){ init(n); build(1, 0, this->n - 1, arr); }
 
     void update(int l, int r, auto x) { update(1, 0, this->n-1, l, r, T(x)); }
     auto query(int l, int r) { if (l>r) return T::null_v().val; return query(1, 0, this->n-1, l, r).val; }
