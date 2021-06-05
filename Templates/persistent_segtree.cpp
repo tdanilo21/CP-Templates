@@ -89,7 +89,8 @@ public:
         return query(this->roots[t], 0, this->n-1, l, r).val;
     }
 
-    void Log(int t) const {
+    void Log(int t = -1) const {
+        if (!~t) t = this->timer-1;
         assert(t < this->timer);
         queue<node<T>*> q;
         q.push(this->roots[t]);
