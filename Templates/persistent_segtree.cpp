@@ -89,20 +89,6 @@ public:
         return query(this->roots[t], 0, this->n-1, l, r).val;
     }
 
-    void Print(int t) const {
-        assert(t < this->timer);
-        queue<node<T>*> q;
-        q.push(this->roots[t]);
-        while (q.size()) {
-            node<T>* s = q.front(); q.pop();
-            s->Print();
-            if (s->ch[0]) {
-                q.push(s->ch[0]);
-                q.push(s->ch[1]);
-            }
-        }
-        cout << en;
-    }
     void log(int t) const {
         assert(t < this->timer);
         queue<node<T>*> q;
