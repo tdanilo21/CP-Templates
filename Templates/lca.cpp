@@ -1,20 +1,21 @@
 #define pb push_back
-#define bithigh(a) 64-__builtin_clzll(a)
-#define log(a) bithigh(a)-1
-#define highpow(a) (1<<log(a))
 #define sp ' '
 #define en '\n'
+#define tb '\t'
+#define bithigh(a) 64-__builtin_clzll(a)
+int lg(ll a) { return bithigh(a) - 1; }
+ll highpow(ll a) { return 1LL << (ll)lg(a); }
 class lca{
 private:
     int n, _edges_ = 0;
     vector<int> depth;
     vector<vector<int> > g, par;
-    bool _initialized_ = 0;
+    bool _initialized_ = 0, _computed_ = 0;
     void init(int n){
         this->n = n;
         this->depth = vector<int>(n);
         this->g = vector<vector<int> >(n);
-        this->par = vector<vector<int> >(n, vector<int>(log(n)+10, -1));
+        this->par = vector<vector<int> >(n, vector<int>(lg(n)+10, -1));
         this->_initialized_ = 1;
     }
     void dfs(int s, int p, int d){
@@ -48,39 +49,42 @@ public:
         }
 
         dfs(root, -1, 0);
-        for (int d = 1; d < log(this->n)+1; d++)
+        for (int d = 1; d < lg(this->n)+1; d++)
             for (int s = 0; s < this->n; s++)
                 if (this->depth[s] >= (1<<d))
                     this->par[s][d] = this->par[this->par[s][d-1]][d-1];
+        _computed_ = 1;
     }
     int GetPar(int s, int d) const {
 
         if (d > this->depth[s]) return -1;
         if (!d) return s;
-        return GetPar(this->par[s][log(d)], d-highpow(d));
+        return GetPar(this->par[s][lg(d)], d-highpow(d));
     }
     int GetLca(int u, int v) const {
 
         if (this->depth[u] > this->depth[v]) swap(u, v);
         v = GetPar(v, this->depth[v] - this->depth[u]);
-        int l = 0, r = this->depth[u], ans = -1;
-        while (l <= r){
-            int k = (l + r + 1) / 2;
-            if (GetPar(u, k) == GetPar(v, k)){
-                ans = GetPar(u, k);
-                r = k - 1;
+        if (u==v) return v;
+        for (int i = lg(this->n)+1; ~i; i--){
+            if (this->par[u][i]^this->par[v][i]){
+                u = this->par[u][i];
+                v = this->par[v][i];
             }
-            else l = k + 1;
         }
-        return ans;
+        return this->par[u][0];
     }
-    void Print() const {
+    void Log() const {
 
+        if (!this->_computed_){
+            cerr << "Lca table has not been computed yet!" << endl;
+            exit(1);
+        }
         for (int s = 0; s < this->n; s++){
-            cout << s << sp;
-            for (int d = 0; d < (int)log2(this->n)+1; d++)
-                cout << this->par[s][d] << sp;
-            cout << en;
+            cerr << s << tb;
+            for (int d = 0; d < lg(this->n)+1; d++)
+                cerr << this->par[s][d] << sp;
+            cerr << endl;
         }
     }
 };
