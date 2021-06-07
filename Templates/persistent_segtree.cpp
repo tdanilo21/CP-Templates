@@ -75,6 +75,8 @@ private:
 public:
     persistent_segtree<T>() {}
     persistent_segtree<T>(int n, auto* arr) { init(n, arr); }
+    int GetTimer() const { return this->timer; }
+    void update(){ this->roots.pb(this->roots[this->timer-1]); this->timer++; }
     void update(int pos, auto x, int t = -1) {
         if (!~t) t = this->timer-1;
         assert(t < this->timer);
