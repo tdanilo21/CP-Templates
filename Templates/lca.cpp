@@ -89,6 +89,15 @@ public:
         }
         return this->par[u][0];
     }
+    int Dist(int u, int v) const {
+
+        if (!this->_computed_){
+            cerr << "Lca table has not been computed yet!" << endl;
+            exit(1);
+        }
+        int s = Lca(u, v);
+        return this->depth[u] + this->depth[v] - 2*this->depth[s];
+    }
     void Log() const {
 
         if (!this->_computed_){
