@@ -55,16 +55,31 @@ public:
                     this->par[s][d] = this->par[this->par[s][d-1]][d-1];
         _computed_ = 1;
     }
-    int GetPar(int s, int d) const {
-
-        if (d > this->depth[s]) return -1;
-        if (!d) return s;
-        return GetPar(this->par[s][lg(d)], d-highpow(d));
+    int Depth(int s) const {
+        if (!this->_computed_){
+            cerr << "Lca table has not been computed yet!" << endl;
+            exit(1);
+        }
+        return this->depth[s];
     }
-    int GetLca(int u, int v) const {
+    int Par(int s, int d) const {
 
+        if (!this->_computed_){
+            cerr << "Lca table has not been computed yet!" << endl;
+            exit(1);
+        }
+        if (d < 0 || d > this->depth[s]) return -1;
+        if (!d) return s;
+        return Par(this->par[s][lg(d)], d-highpow(d));
+    }
+    int Lca(int u, int v) const {
+
+        if (!this->_computed_){
+            cerr << "Lca table has not been computed yet!" << endl;
+            exit(1);
+        }
         if (this->depth[u] > this->depth[v]) swap(u, v);
-        v = GetPar(v, this->depth[v] - this->depth[u]);
+        v = Par(v, this->depth[v] - this->depth[u]);
         if (u==v) return v;
         for (int i = lg(this->n)+1; ~i; i--){
             if (this->par[u][i]^this->par[v][i]){
