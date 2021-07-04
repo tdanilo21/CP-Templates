@@ -1,3 +1,4 @@
+#define ll long long
 class NetworkFlowSolver : public NetworkFlowSolverBase {
 	private:
 		vector<Edge*> par;
