@@ -22,7 +22,6 @@ class EdmondsKarp : public NetworkFlowSolverBase {
 			return 0;
 		}
 		void Solve() override {
-			this->par = *new vector<Edge*>(this->n);
 			while (ll bottleNeck = BFS()){
 				int s = this->sink;
 				while (s ^ this->source){
@@ -34,5 +33,5 @@ class EdmondsKarp : public NetworkFlowSolverBase {
 		}
 	public:
 		EdmondsKarp() {};
-		EdmondsKarp(int n, int source, int sink) { Initialize(n, source, sink); }
+		EdmondsKarp(int n, int source, int sink) { this->par = *new vector<Edge*>(this->n); Initialize(n, source, sink); }
 	};
