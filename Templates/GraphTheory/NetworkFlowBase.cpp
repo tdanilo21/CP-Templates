@@ -1,3 +1,5 @@
+#define ll long long
+#define pb push_back
 const ll LINF = 4e18;
 namespace MaxFlow {
 
