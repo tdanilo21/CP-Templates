@@ -1,5 +1,5 @@
 #define ll long long
-class NetworkFlowSolver : public NetworkFlowSolverBase {
+class EdmondsKarp : public NetworkFlowSolverBase {
 	private:
 		vector<Edge*> par;
 		ll BFS() {
@@ -33,6 +33,6 @@ class NetworkFlowSolver : public NetworkFlowSolverBase {
 			}
 		}
 	public:
-		NetworkFlowSolver() {};
-		NetworkFlowSolver(int n, int source, int sink) { Initialize(n, source, sink); }
+		EdmondsKarp() {};
+		EdmondsKarp(int n, int source, int sink) { Initialize(n, source, sink); }
 	};
