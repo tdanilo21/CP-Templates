@@ -1,5 +1,6 @@
 #define pb push_back
 namespace SCC{
+    
     class StronglyConnectedComponentsBase{
     private:
         bool solved;
@@ -23,5 +24,23 @@ namespace SCC{
     private:
         void Execute(){ if (this->solved) return; this->solved = 1; Solve(); }
         virtual void Solve() = 0;
+        void Clean(){
+            for (int s = 0; s < this->n1; s++){
+                vector<int> t;
+                for (int i = 0; i < this->g1[s].size(); i++)
+                    if (!i || this->g1[s][i]^this->g1[s][i-1])
+                        t.pb(this->g1[s][i]);
+                this->g1[s].clear();
+                for (int u : t) this->g1[s].pb(u);
+            }
+        }
+    protected:
+        void Compress(){
+            this->g1 = vector<vector<int> >(this->n1);
+            for (int s = 0; s < this->n; s++)
+                for (int u : this->g[s])
+                    this->g1[this->comp[s]].pb(this->comp[u]);
+            Clean();
+        }
     };
   }
