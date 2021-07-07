@@ -1,3 +1,4 @@
+#define smin(a, b) a = min(a, b)
 class Tarjan : public StronglyConnectedComponentsBase{
     private:
         vector<int> tin;
