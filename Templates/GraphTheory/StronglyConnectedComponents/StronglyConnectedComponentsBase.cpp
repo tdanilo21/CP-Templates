@@ -1,3 +1,4 @@
+#define pb push_back
 namespace SCC{
     class StronglyConnectedComponentsBase{
     private:
