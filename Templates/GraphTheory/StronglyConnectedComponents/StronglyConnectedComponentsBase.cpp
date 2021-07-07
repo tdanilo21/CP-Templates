@@ -20,6 +20,7 @@ namespace SCC{
         void Add(int u, int v){ this->g[u].pb(v); }
         vector<vector<int> > GetCompresedGraph(){ Execute(); return this->g1; }
         vector<int> GetComp(){ Execute(); return this->comp; }
+        vector<vector<int> > GetComps(){ Execute(); return this->comps; }
         int GetSize(){ Execute(); return this->n1; }
     private:
         void Execute(){ if (this->solved) return; this->solved = 1; Solve(); }
@@ -40,6 +41,9 @@ namespace SCC{
             for (int s = 0; s < this->n; s++)
                 for (int u : this->g[s])
                     this->g1[this->comp[s]].pb(this->comp[u]);
+            this->comps = vector<vector<int> >(this->n1);
+            for (int s = 0; s < this->n; s++)
+                this->comps[this->comp[s]].pb(s);
             Clean();
         }
     };
