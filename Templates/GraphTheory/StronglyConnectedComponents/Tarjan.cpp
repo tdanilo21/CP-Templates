@@ -29,5 +29,6 @@ class Tarjan : public StronglyConnectedComponentsBase{
             Compress();
         }
     public:
+        Tarjan(){}
         Tarjan(int n){ Initialize(n); this->tin = vector<int>(n, -1); this->OnStack = vector<bool>(n, 0); }
     };
