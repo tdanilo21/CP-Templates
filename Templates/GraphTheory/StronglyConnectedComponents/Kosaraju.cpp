@@ -38,5 +38,6 @@
             Compress();
         }
     public:
+        Kosaraju(){}
         Kosaraju(int n){ Initialize(n); this->_g = vector<vector<int> >(n); this->vis = vector<bool>(n, 0); }
     };
