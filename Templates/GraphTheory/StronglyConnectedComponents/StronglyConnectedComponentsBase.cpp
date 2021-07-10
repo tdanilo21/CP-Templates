@@ -41,7 +41,8 @@ namespace SCC{
             this->g1 = vector<vector<int> >(this->n1);
             for (int s = 0; s < this->n; s++)
                 for (int u : this->g[s])
-                    this->g1[this->comp[s]].pb(this->comp[u]);
+                    if (this->comp[s]^this->comp[u])
+                        this->g1[this->comp[s]].pb(this->comp[u]);
             this->comps = vector<vector<int> >(this->n1);
             for (int s = 0; s < this->n; s++)
                 this->comps[this->comp[s]].pb(s);
