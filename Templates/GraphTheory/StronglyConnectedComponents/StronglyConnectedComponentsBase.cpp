@@ -4,9 +4,10 @@ namespace SCC{
     class StronglyConnectedComponentsBase{
     private:
         bool solved;
+        vector<vector<int> > g1, comps;
     protected:
         int n, n1;
-        vector<vector<int> > g, g1;
+        vector<vector<int> > g;
         vector<int> comp;
         stack<int> st;
         void Initialize(int n){
