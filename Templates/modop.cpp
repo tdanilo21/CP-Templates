@@ -1,7 +1,6 @@
 #define ll long long
-const ll LINF = 4e18;
-const int mxN = 2e5+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
 namespace modop{
+    const int mod = (1 ? 1e9+7 : 998244353);
     vector<ll> fact, ifact;
     ll norm(ll a){ a%=mod; if(a<0)a+=mod; return a; }
     ll add(ll a, ll b){ norm(a);norm(b); a+=b; return norm(a); }
