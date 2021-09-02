@@ -42,7 +42,7 @@ private:
     T query(int s, int l, int r, int ql, int qr) {
         eval_lazy(s, l, r);
         if (l > qr || r < ql) return T::null_v();
-        if (l >= ql && r <= qr) return tree[s];
+        if (l >= ql && r <= qr) return this->tree[s];
 
         int m = (l + r) / 2;
         T a = query(2*s, l, m, ql, qr);
