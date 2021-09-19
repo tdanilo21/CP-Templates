@@ -31,7 +31,7 @@ using namespace std;
 
 const ll LINF = 4e18;
 const int mxN = 2e5+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
-ll n, m, d, q, a[mxN];
+ll n, m, a[mxN];
 
 void Solve(){
 
