@@ -12,6 +12,7 @@ public:
         this->val = val;
         this->ch[0] = this->ch[1] = nullptr;
     }
+    ~node<T>(){ delete this->ch[0]; delete this->ch[1]; }
     void add(int x, T val = T()){ this->ch[x] = new node<T>(val); }
 };
 template<class T>
@@ -62,6 +63,7 @@ private:
 public:
     implicit_segtree(){}
     implicit_segtree(ll l, ll r){ init(l, r); }
+    ~implicit_segtree(){ delete this->root; }
     void update(ll pos, auto x){ update(this->root, this->left, this->right, pos, T(x)); }
     auto query(ll l, ll r){ if (l > r) return T::null_v().val; return query(this->root, this->left, this->right, l, r).val; }
 };
