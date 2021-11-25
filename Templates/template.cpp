@@ -23,9 +23,9 @@
 #define smax(a, b) a = max(a, b)
 #define ssort(a, b) if (a < b) swap(a, b)
 #define bitcnt(a) __builtin_popcountll(a)
-#define bithigh(a) 64-__builtin_clzll(a)
-int mlog(ll a) { return bithigh(a) - 1; }
-ll highpow(ll a) { return 1LL << (ll)mlog(a); }
+#define bithigh(a) 63-__builtin_clzll(a)
+#define lg bithigh
+ll highpow(ll a) { return 1LL << (ll)lg(a); }
 
 using namespace std;
 
@@ -34,7 +34,6 @@ const int mxN = 2e5+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
 ll n, m, a[mxN];
 
 void Solve(){
-
 
 }
 
