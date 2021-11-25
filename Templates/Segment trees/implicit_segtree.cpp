@@ -35,7 +35,7 @@ private:
         if (l == r) return s->val = x;
 
         T a = T(), b = T();
-        ll m = (l + r) / 2;
+        ll m = floor((double)(l + r) / 2.0);
         if (pos <= m){
             a = update(ch(s, 0), l, m, pos, x);
             if (s->ch[1]) b = ch(s, 1)->val;
@@ -51,7 +51,7 @@ private:
         if (l >= ql && r <= qr) return s->val;
 
         T a = T(), b = T();
-        ll m = (l + r) / 2;
+        ll m = floor((double)(l + r) / 2.0);
         if (ql > m) a = T::null_v();
         if (qr <= m) b = T::null_v();
 
