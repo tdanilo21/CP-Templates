@@ -13,6 +13,10 @@ public:
         this->val = val;
         this->ch[0] = this->ch[1] = nullptr;
     }
+    ~node<T>(){ 
+        delete this->ch[0]; delete this->ch[1];
+        this->ch[0] = this->ch[1] = nullptr;
+    }
     void add(int x, T val = T()) { this->ch[x] = new node<T>(val); }
 
     void Print() const { val.Print(); }
@@ -75,6 +79,7 @@ private:
 public:
     persistent_segtree<T>() {}
     persistent_segtree<T>(int n, auto* arr) { init(n, arr); }
+    ~presistent_segtree<T>(){ for (node<T>* r : roots) delete r; }
     int GetTimer() const { return this->timer; }
     void update(){ this->roots.pb(this->roots[this->timer-1]); this->timer++; }
     void update(int pos, auto x, int t = -1) {
