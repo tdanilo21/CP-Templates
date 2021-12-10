@@ -1,7 +1,7 @@
 #define ll long long
-#define bithigh(a) 64-__builtin_clzll(a)
-int log(ll a) { return bithigh(a) - 1; }
-ll highpow(ll a) { return 1LL << (ll)log(a); }
+#define bithigh(a) 63-__builtin_clzll(a)
+#define lg bithigh
+ll highpow(ll a) { return 1LL << (ll)lg(a); }
 template<class T>
 class node{
 public:
