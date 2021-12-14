@@ -21,12 +21,12 @@ namespace NumberTheory{
                 return 0;
         return 1;
     }
-    void GetPrimes(int mx){
+    void GetPrimes(){
         if (!_precomputed_sito_){
             cerr << "Precompute sito u idiot." << endl;
             exit(1);
         }
-        for (int i = 2; i < mx; i++)
+        for (int i = 2; i < sito.size(); i++)
             if (sito[i]==i)
                 primes.pb(i);
     }
