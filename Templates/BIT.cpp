@@ -26,7 +26,6 @@ public:
     }
 
     void update(int pos, ll x){
-        x -= query(pos, pos);
         pos++;
         if (pos <= 0) return;
         while (pos <= n){
