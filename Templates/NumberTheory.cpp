@@ -8,9 +8,9 @@ namespace NumberTheory{
         sito = vector<int>(mx+10);
         for (int i = 2; i < mx; i++)
             sito[i] = i;
-        for (int i = 2; i < mx; i++)
+        for (ll i = 2; i < mx; i++)
             if (sito[i] == i)
-                for (int j = 2*i; j < mx; j += i)
+                for (ll j = i*i; j < mx; j += i)
                     sito[j] = i;
     }
     bool IsPrime(int x){
