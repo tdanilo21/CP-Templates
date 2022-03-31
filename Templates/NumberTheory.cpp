@@ -2,7 +2,39 @@
 namespace NumberTheory{
     vector<int> sito, primes;
     bool _precomputed_sito_ = 0;
-    ll gcd(ll a, ll b){ if (!b) return a; return gcd(b, a % b); }
+    ll gcd(ll a, ll b, ll* x = nullptr, ll* y = nullptr){
+        if (!b){
+            if (x){ *x = 1; *y = 0; }
+            return a;
+        }
+        ll x1, y1;
+        ll g = gcd(b, a%b, &x1, &y1);
+        if (x){ *x = y1; *y = x1 - (a/b) * y1; }
+        return g;
+    }
+    array<ll, 2> Crt(const vector<array<ll, 2> >& v){
+        queue<array<ll, 2> > q;
+        ll nzd = 0;
+        for (auto x : v){
+            x[0] %= x[1]; if (x[0]<0) x[0] += x[1];
+            nzd = gcd(nzd, x[1]);
+            q.push(x);
+        }
+        if (nzd^1) return {-1, -1};
+        while (1){
+            auto s1 = q.front(); q.pop();
+            auto s2 = q.front(); q.pop();
+            if (s2[0]-s1[0] < 0) swap(s1, s2);
+            ll x, y;
+            gcd(s1[1], s2[1], &x, &y);
+            ll m = s1[1]*s2[1];
+            x %= s2[1]; if (x<0) x += s2[1];
+            ll c = (x * (s2[0] - s1[0])) % m;
+            array<ll, 2> s3 = {(c * s1[1] + s1[0]) % m, m};
+            if (q.empty()) return s3;
+            q.push(s3);
+        }
+    }
     void PrecomputeSito(const int mx){
         _precomputed_sito_ = 1;
         sito = vector<int>(mx+10);
