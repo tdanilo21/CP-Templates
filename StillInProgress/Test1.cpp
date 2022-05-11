@@ -29,58 +29,115 @@ ll highpow(ll a) { return 1LL << (ll)lg(a); }
 
 using namespace std;
 
+class segtree{
+
+    int n;
+    vector<ll> tree;
+
+    void init(int s){
+        n = highpow(s);
+        if (bitcnt(s) > 1) n <<= 1;
+        tree.assign(2*n, 0);
+    }
+
+    ll update(int s, int l, int r, int pos, ll x){
+        if (pos < l || pos > r) return tree[s];
+        if (l == r) return tree[s] = x;
+        int m = (l + r)>>1;
+        ll a = update(2*s, l, m, pos, x);
+        ll b = update(2*s+1, m+1, r, pos, x);
+        return tree[s] = max(a, b);
+    }
+
+    ll query(int s, int l, int r, int ql, int qr) const {
+        if (ql > r || qr < l) return 0;
+        if (l >= ql && r <= qr) return tree[s];
+        int m = (l + r)>>1;
+        ll a = query(2*s, l, m, ql, qr);
+        ll b = query(2*s+1, m+1, r, ql, qr);
+        return max(a, b);
+    }
+
+public:
+    segtree(int n){ init(n); }
+    void update(int pos, ll x){ update(1, 0, n-1, pos, x); }
+    ll query(int l, int r) const { if (l>r) return 0; return query(1, 0, n-1, l, r); }
+};
+
 const ll LINF = 4e18;
-const int mxN = 1e3+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
-ll n, m, dp[2][2][mxN][mxN];
+const int mxN = 2e2+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
+ll n, m, a[mxN], b[mxN], dp[mxN][mxN], sub_dp[mxN][mxN];
+vector<int> g[mxN];
+segtree* st[mxN];
 
-void DP(const vector<int>& a, int t){
+int BS(int i, int u, int j){
 
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j <= n; j++){
-            dp[t][0][i][j] = -LINF;
-            dp[t][1][i][j] = LINF;
+    int l = 0, r = j, ans = j;
+    while (l <= r){
+        int k = (l + r + 1)>>1;
+        if (sub_dp[i][k] >= dp[u][j-k]){
+            r = k - 1;
+            ans = k;
+        }
+        else l = k + 1;
+    }
+    return ans;
+}
+
+void DP(int s){
+
+    int n = g[s].size();
+    for (int i = 0; i <= n; i++)
+        for (int j = 0; j <= m; j++)
+            sub_dp[i][j] = 0;
+    if (!n) return;
+    segtree* sub_st[n];
+    for (int i = 0; i < n; i++)
+        sub_st[i] = new segtree(m+1);
+    for (int j = 0; j <= m; j++){
+        sub_dp[0][j] = dp[g[s][0]][j];
+        sub_st[0]->update(j, sub_dp[0][j]);
+    }
+    for (int i = 1; i < n; i++){
+        for (int j = 0; j <= m; j++){
+            int k = BS(i-1, g[s][i], j);
+            sub_dp[i][j] = max(sub_st[i-1]->query(0, k-1), st[g[s][i]]->query(k, j));
+            sub_st[i]->update(j, sub_dp[i][j]);
         }
     }
-    dp[t][0][0][0] = dp[t][1][0][0] = 0;
-    dp[t][0][0][1] = dp[t][1][0][1] = a[0];
-    for (int i = 0; i < n-1; i++){
-        for (int j = 0; j <= n; j++){
-            smax(dp[t][0][i+1][j], dp[t][0][i][j]);
-            if (dp[t][0][i][j] != -LINF && j < n) smax(dp[t][0][i+1][j+1], dp[t][0][i][j] + a[i+1]);
-            smin(dp[t][1][i+1][j], dp[t][1][i][j]);
-            if (dp[t][1][i][j] != LINF && j < n) smin(dp[t][1][i+1][j+1], dp[t][1][i][j] + a[i+1]);
-        }
+    for (int i = 0; i < n; i++)
+        delete sub_st[i];
+}
+
+void dfs(int s){
+
+    for (int u : g[s])
+        dfs(u);
+    DP(s);
+    for (int j = 0; j <= m; j++){
+        for (int k = 0; k <= j; k++)
+            smax(dp[s][j], k + sub_dp[g[s].size()-1][j-k]);
+        dp[s][j] = a[s] + b[s] * dp[s][j];
+        st[s]->update(j, dp[s][j]);
     }
 }
 
 void Solve(){
 
     cin >> n >> m;
-    vector<int> a(n);
-    rv(a);
-    DP(a, 0);
-    reverse(all(a));
-    DP(a, 1);
-    for (int t = 0; t < 2; t++){
-        for (int k = 0; k < 2; k++){
-            for (int i = 0; i < n; i++){
-                for (int j = 0; j <= n; j++)
-                    cout << dp[t][k][i][j] << sp;
-                cout << en;
-            }
-            cout << en;
-        }
-    }
-    ll ans = -LINF;
     for (int i = 0; i < n; i++){
-        for (int t = 1; t < m; t++){
-            int j = n-i-2;
-            int k = m - t;
-            smax(ans, dp[0][0][i][t] - dp[1][1][j][k]);
-            smax(ans, dp[1][0][j][k] - dp[0][1][i][t]);
-        }
+        ri(p); p--;
+        if (~p) g[p].pb(i);
+        cin >> a[i] >> b[i];
     }
-    cout << ans << en;
+    for (int i = 0; i < n; i++)
+        st[i] = new segtree(m+1);
+    dfs(0);
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j <= m; j++)
+            cout << dp[i][j] << sp;
+        cout << en;
+    }
 }
 
 int main(){
@@ -92,7 +149,7 @@ int main(){
     cerr << "Started!" << endl;
 
     int t = 1;
-    cin >> t;
+    //cin >> t;
     while (t--)
         Solve();
 
