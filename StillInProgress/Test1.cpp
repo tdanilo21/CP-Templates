@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include "code.h"
 
 #define ll long long
 #define ld long double
@@ -30,195 +29,169 @@ ll highpow(ll a) { return 1LL << (ll)lg(a); }
 
 using namespace std;
 
-struct Point{
+struct node{
 
-    ll x, y;
-    ll Dist(const Point& p) const { return x*p.x + y*p.y; }
-    int Turn(const Point& a, const Point& b) const {
-        ll t = (a.x - x) * (b.y - y) - (a.y - y) * (b.x - x);
-        if (t) t /= abs(t);
-        return t; // (-1, 0, 1) => (clockwise, paralel, anti-clockwise)
+    int val;
+    node* ch[2];
+    node(int v = 0){ val = v; ch[0] = ch[1] = nullptr; }
+    node* create(int i){ return ch[i] = new node(); }
+};
+class segtree{
+
+    int n, T;
+    vector<node*> root;
+    void init(int s){
+        n = highpow(s);
+        if (bitcnt(s) > 1) n <<= 1;
+        root.pb(new node());
+        T = 1;
+        build(root[0], 0, n-1);
     }
-    bool OnSegment(const array<Point, 2>& p) const { return !Turn(p[0], p[1]) && max(p[0].x, p[1].x) >= x && min(p[0].x, p[1].x) <= x; }
-    static bool Intersect(const array<Point, 2>& a, const array<Point, 2>& b){
-        int o1 = a[0].Turn(a[1], b[0]);
-        int o2 = a[0].Turn(a[1], b[1]);
-        int o3 = b[0].Turn(b[1], a[0]);
-        int o4 = b[0].Turn(b[1], a[1]);
-        return o1*o2 <= 0 && o3*o4 <= 0;
+
+    void build(node* s, int l, int r){
+        if (l==r) return;
+        int m = (l + r)>>1;
+        build(s->create(0), l, m);
+        build(s->create(1), m+1, r);
     }
-    bool Inside(const vector<Point>& points) const {
-        if (points.size() == 1) return x == points[0].x && y == points[0].y;
-        Point extreme = {INT_MAX, 0};
-        int cnt = 0;
-        for (int i = 0; i < points.size(); i++){
-            array<Point, 2> d = {points[i], points[(i+1) % points.size()]};
-            if (Point::Intersect(d, {*this, extreme})) cnt++;
-            if (OnSegment(d)) return 1;
+
+    void update(node* s, node* last, int l, int r, int pos, int x){
+        if (l == r){ s->val = x; return; }
+        int m = (l + r)>>1;
+        if (pos <= m){
+            update(s->create(0), last->ch[0], l, m, pos, x);
+            s->ch[1] = last->ch[1];
         }
-        return cnt&1;
+        else{
+            update(s->create(1), last->ch[1], m+1, r, pos, x);
+            s->ch[0] = last->ch[0];
+        }
+        s->val = s->ch[0]->val + s->ch[1]->val;
     }
-    bool operator<(const Point& p) const { return y < p.y || (y == p.y && x < p.x); }
-    bool operator>(const Point& p) const { return y > p.y || (y == p.y && x > p.x); }
+
+    int query(node* s, int l, int r, int ql, int qr) const {
+        if (l > qr || r < ql) return 0;
+        if (l >= ql && r <= qr) return s->val;
+        int m = (l + r)>>1;
+        int a = query(s->ch[0], l, m, ql, qr);
+        int b = query(s->ch[1], m+1, r, ql, qr);
+        return a + b;
+    }
+
+public:
+    segtree(int n){ init(n); }
+    void update(int pos, int x, int t = -1){ if (!~t) t = T; root.pb(new node()); T++; update(root[T], root[t], 0, n-1, pos, x); }
+    int query(int l, int r, int t) const { return query(root[t], 0, n-1, l, r); }
+    int time() const { return T; }
 };
 
-Point C;
-
-bool cmp(const Point& a, const Point& b){
-
-    if (a.x == C.x && a.y == C.y) return 1;
-    int t = C.Turn(a, b);
-    if (!t) return C.Dist(a) < C.Dist(b);
-    return t > 0;
-}
-
-vector<Point> GrahamScan(vector<Point> points){
-    int mn = 0;
-    for (int i = 0; i < points.size(); i++)
-        if (points[i] < points[mn]) mn = i;
-    swap(points[0], points[mn]);
-    C = points[0];
-    sort(points.begin()+1, points.end(), cmp);
-    int n = 1;
-    for (int i = 1; i < points.size(); i++){
-        while (i < points.size()-1 && !C.Turn(points[i], points[i+1])) i++;
-        points[n++] = points[i];
-    }
-    if (n <= 3) return vector<Point>(points.begin(), points.begin() + n);
-    vector<Point> Hull = {points[0], points[1]};
-    for (int i = 2; i < n; i++){
-        while (Hull.size() > 1 && Hull.back().Turn(points[i], Hull[Hull.size()-2]) != 1)
-            Hull.pop_back();
-        Hull.pb(points[i]);
-    }
-    return Hull;
-}
-
-void Print(const vector<Point>& points){ for (auto p : points) cout << "(" << p.x << ", " << p.y << ") "; cout << en; }
-
-template<class T>
-struct Sparse{
+class Lca{
 
     int n;
-    vector<vector<Point> > lookup;
-    Sparse(int s, const vector<Point>& points){
+    vector<vector<int> > g, par;
+    vector<int> depth, in, out;
+
+    int dfs(int s, int p, int d, int t){
+        par[s][0] = p;
+        depth[s] = d;
+        in[s] = t;
+        for (int u : g[s])
+            if (u^p)
+                t = dfs(u, s, d+1, t+1);
+        return out[s] = t+1;
+    }
+
+public:
+    Lca(int s){
         n = s;
-        lookup = vector<vector<Point> >(n, vector<Point>(lg(n)+1, T::null_v()));
-        for (int i = 0; i < n; i++) lookup[i][0] = points[i];
+        g.resize(n+1);
+        par.assign(n+1, vector<int>(lg(n)+1, -1));
+        depth.resize(n+1);
+        in.resize(n+1);
+        out.resize(n+1);
+    }
+
+    void add(int u, int v){
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+
+    void Compute(int root){
+        dfs(root, 0, 0, 0);
         for (int d = 1; d <= lg(n); d++)
-            for (int i = 0; i < n; i++)
-                if (i+(1<<d) < n)
-                    lookup[i][d] = T::op(lookup[i][d-1], lookup[i + (1<<d)][d-1]);
-        for (int i = 0; i < n; i++){
-            Print(lookup[i]);
-            cout << en;
+            for (int s = 1; s <= n; s++)
+                if (~par[s][d-1])
+                    par[s][d] = par[par[s][d-1]][d-1];
+    }
+
+    bool Ancestor(int p, int s) const { return in[s] >= in[p] && out[s] <= out[p]; }
+    int Par(int s, int d) const {
+        if (!d) return s;
+        return Par(par[s][lg(d)], d-highpow(d));
+    }
+    int lca(int u, int v) const {
+        if (depth[u] > depth[v]) swap(u, v);
+        if (Ancestor(u, v)) return u;
+        v = Par(v, depth[v]-depth[u]);
+        for (int d = lg(n); ~d; d++){
+            if (par[u][d]^par[v][d]){
+                u = par[u][d];
+                v = par[v][d];
+            }
         }
+        return par[u][0];
     }
-    Point query(int l, int r) const {
-        if (l>r) return T::null_v();
-        int d = highpow(r-l+1);
-        return T::op(lookup[l][lg(d)], query(l+d, r));
-    }
-};
-
-struct Min{
-    static Point null_v(){ return {INT_MAX, INT_MAX}; }
-    static Point op(const Point& a, const Point& b){ return min(a, b); }
-};
-
-struct Max{
-    static Point null_v(){ return {INT_MIN, INT_MIN}; }
-    static Point op(const Point& a, const Point& b){ return max(a, b); }
+    int In(int s) const { return in[s]; }
+    int Out(int s) const { return out[s]; }
 };
 
 const ll LINF = 4e18;
 const int mxN = 2e5+10, INF = 2e9, mod = (1 ? 1e9+7 : 998244353);
-ll n, m;
-Point P;
-vector<Point> a;
-Sparse<Min> *min_st[2];
-Sparse<Max> *max_st[2];
+int t[mxN];
+vector<int> g[mxN];
+Lca *lc1, *lc2;
+segtree* st;
 
-vector<array<int, 2> > Check(const Point& p, const Point& q){
+void dfs(int s, int p){
 
-    set<Point> s;
-    for (int i = 0; i < n; i++)
-        if (p.Turn(q, a[i]))
-            s.insert(a[i]);
-    vector<array<int, 2> > w(n, {1, 0});
-    if (s.empty()) return w;
-    Point t = *s.begin();
-    if (s.size() == 1){
-        for (int i = 0; i < n; i++)
-            if (a[i].x == t.x && a[i].y == t.y)
-                swap(w[i][0], w[i][1]);
-        return w;
-    }
-    Point r = *s.rbegin();
-
-    for (int i = 0; i < n; i++){
-        w[i][0] = (p.Turn(q, a[i]) == 0);
-        w[i][1] = (t.Turn(r, a[i]) == 0);
-        if (w[i][0] + w[i][1] == 0) return {};
-    }
-    return w;
+    st->update(lc2->In(s), 1, t[p]);
+    st->update(lc2->Out(s), -1);
+    t[s] = st->time();
+    for (int u : g[s])
+        if (u^p)
+            dfs(u, s);
 }
 
-vector<array<int, 2> > Find(){
+int query(int s, int u, int v){
 
-    set<Point> s;
-    for (int i = 0; i < n; i++) s.insert(a[i]);
-    if (s.size() <= 2) return vector<array<int, 2> >(n, {1, 0});
-    vector<Point> v;
-    for (auto it = s.begin(); it != s.end(); it++) v.pb(*it);
-    auto w = Check(v[0], v[1]);
-    if (w.size()) return w;
-    return {};
-    w = Check(v[0], v[2]);
-    if (w.size()) return w;
-    return Check(v[1], v[2]);
+    int p = lc2->lca(u, v);
+    int a = lc2->In(u);
+    int b = lc2->In(v);
+    int c = lc2->In(p);
+    return st->query(c, a, t[s]) + st->query(c, b, t[s]) - st->query(c, c, t[s]);
 }
 
-void initSparse(const vector<array<int, 2> >& w){
+void Resi(int N, int Q, int P, int *U1, int *V1, int *U2, int *V2, int *A1, int *B1, int *C1, int *D1, int *R){
 
-    vector<Point> p1(n, Min::null_v()), p2(n, Min::null_v());
-    for (int i = 0; i < n; i++){
-        if (w[i][0]) p1[i] = a[i];
-        if (w[i][1]) p2[i] = a[i];
+    lc1 = new Lca(N); lc2 = new Lca(N);
+    for (int i = 1; i <= N; i++){
+        g[U1[i]].pb(V1[i]);
+        g[V1[i]].pb(U1[i]);
+        lc1->add(U1[i], V1[i]);
+        lc2->add(U2[i], V2[i]);
     }
-    min_st[0] = new Sparse<Min>(n, p1);
-    min_st[1] = new Sparse<Min>(n, p2);
-    for (int i = 0; i < n; i++){
-        if (p1[i].x == Min::null_v().x) p1[i] = Max::null_v();
-        if (p2[i].x == Min::null_v().x) p2[i] = Max::null_v();
-    }
-    max_st[0] = new Sparse<Max>(n, p1);
-    max_st[1] = new Sparse<Max>(n, p2);
-}
-
-void Resi(int N, int Px, int Py, int *X, int *Y, int Q, int *L, int *R, bool *O){
-
-    n = N;
-    P = {Px, Py};
-    for (int i = 1; i <= N; i++) a.pb({X[i], Y[i]});
-    auto w = Find();
-    if (w.empty()){
-        for (int i = 1; i <= Q; i++){
-            auto Hull = GrahamScan(vector<Point>(a.begin() + L[i]-1, a.begin() + R[i]));
-            O[i] = P.Inside(Hull);
-        }
-        return;
-    }
-    for (int i = 0; i < n; i++)
-        cout << w[i][0] << sp << w[i][1] << en;
-    initSparse(w);
+    lc1->Compute(1);
+    lc2->Compute(1);
+    st = new segtree(2*N);
+    dfs(1, 0);
+    int ans = 0;
     for (int i = 1; i <= Q; i++){
-        L[i]--; R[i]--;
-        array<Point, 2> p = {min_st[0]->query(L[i], R[i]), max_st[0]->query(L[i], R[i])};
-        array<Point, 2> q = {min_st[1]->query(L[i], R[i]), max_st[1]->query(L[i], R[i])};
-        if (p[0].x == Min::null_v().x) swap(p, q);
-        vector<Point> points = {p[0], p[1]};
-        if (q[0].x != Min::null_v().x){ points.pb(q[1]); points.pb(q[0]); }
-        O[i] = P.Inside(points);
+        int a = (A1[i] + ans * P - 1) % N + 1;
+        int b = (B1[i] + ans * P - 1) % N + 1;
+        int c = (C1[i] + ans * P - 1) % N + 1;
+        int d = (D1[i] + ans * P - 1) % N + 1;
+        int s = lc1->lca(a, b);
+        ans = query(a, c, d) + query(b, c, d) - query(s, c, d);
+        R[i] = ans;
     }
 }
