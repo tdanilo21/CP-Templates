@@ -1,3 +1,4 @@
+#define ll long long
 class AVL{
 
     int n, root;
