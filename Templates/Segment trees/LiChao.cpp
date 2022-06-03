@@ -1,5 +1,9 @@
 #define ll long long
 const ll LINF = 4e18;
+struct Line{
+    ll k, n;
+    ll operator()(ll x) const { return k*x+n; }
+};
 class LiChao{
 
     int ln, rn, n;
