@@ -32,6 +32,7 @@ public:
     mll<mod> operator*=(const mll<mod>& a) { v *= a.v; norm(); return *this; }
     mll<mod> operator/=(const mll<mod>& a) { v /= a.v; norm(); return *this; }
     mll<mod> operator^(const ll& a) const { return pow(a); }
+    mll<mod> operator^=(const ll& a) { v = pow(a).v; return *this; }
 
     friend istream& operator>>(istream& is, mll<mod>& a){ is >> a.v; return is; }
     friend ostream& operator<<(ostream& os, const mll<mod>& a){ os << a.v; return os; }
