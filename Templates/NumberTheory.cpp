@@ -12,6 +12,14 @@ namespace NumberTheory{
         if (x){ *x = y1; *y = x1 - (a/b) * y1; }
         return g;
     }
+    ll lcm(ll a, ll b){ return a*b/gcd(a, b); }
+    bool Diof(ll a, ll b, ll c, ll* x0, ll* y0, ll* u, ll* v){
+        ll g = gcd(a, b, x0, y0);
+        if (c%g != 0) return 0;
+        *u = a/g; *v = b/g;
+        *x0 *= c/g; *y0 *= c/g;
+        return 1;
+    }
     array<ll, 2> Crt(const vector<array<ll, 2> >& v){
         queue<array<ll, 2> > q;
         ll nzd = 0;
