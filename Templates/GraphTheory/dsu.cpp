@@ -30,11 +30,11 @@ public:
     int find(int s) const { return this->comp[s]; }
     int clean(){
         int mp[this->n];
-        memset(mp, 0, sizeof(mp));
+        memset(mp, -1, sizeof(mp));
         int m = 0;
         for (int i = 0; i < this->n; i++)
             if (this->sz[this->comp[i]])
-                if (!mp[this->comp[i]])
+                if (!~mp[this->comp[i]])
                     mp[this->comp[i]] = m++;
         for (int i = 0; i < n; i++)
             this->comp[i] = mp[this->comp[i]];
