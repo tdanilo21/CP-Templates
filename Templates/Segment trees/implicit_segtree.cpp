@@ -33,7 +33,7 @@ private:
     }
     T update(node<T>* s, ll l, ll r, ll pos, T x){
         if (l > pos || r < pos) return s->val;
-        if (l == r) return s->val.up(T(x));
+        if (l == r) return s->val.up(x);
 
         T a = T(), b = T();
         ll m = floor((double)(l + r) / 2.0);
