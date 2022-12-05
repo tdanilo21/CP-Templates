@@ -1,18 +1,18 @@
-#define ll long long
+template <class T>
 class AVL{
 
     int n, root;
-    vector<ll> tree;
+    vector<T> tree;
     vector<int> h, sz, l, r;
     queue<int> free;
 
-    void Assign(int s, ll x){
+    void Assign(int s, T x){
         tree[s] = x;
         h[s] = sz[s] = 1;
         l[s] = r[s] = -1;
     }
 
-    int Make(ll x){
+    int Make(T x){
         n++;
         int s = free.front(); free.pop();
         Assign(s, x);
@@ -45,8 +45,8 @@ class AVL{
         return u;
     }
 
-    ll Min(int s) const { if (!~l[s]) return tree[s]; return Min(l[s]); }
-    ll Max(int s) const { if (!~r[s]) return tree[s]; return Max(r[s]); }
+    T Min(int s) const { if (!~l[s]) return tree[s]; return Min(l[s]); }
+    T Max(int s) const { if (!~r[s]) return tree[s]; return Max(r[s]); }
 
     int BF(int s) const { return Height(l[s]) - Height(r[s]); }
 
@@ -62,7 +62,7 @@ class AVL{
         return s;
     }
 
-    int Insert(int s, ll x){
+    int Insert(int s, T x){
         if (!~s) return Make(x);
         if (x < tree[s]) l[s] = Insert(l[s], x);
         else r[s] = Insert(r[s], x);
@@ -70,17 +70,17 @@ class AVL{
         return Balance(s);
     }
 
-    int Delete(int s, ll x){
+    int Delete(int s, T x){
         if (!~s) return s;
         if (x == tree[s]){
             if (!~l[s] && !~r[s]){ Erase(s); return -1; }
             if (!~r[s]){
-                int v = Max(l[s]);
+                T v = Max(l[s]);
                 tree[s] = v;
                 l[s] = Delete(l[s], v);
             }
             else{
-                int v = Min(r[s]);
+                T v = Min(r[s]);
                 tree[s] = v;
                 r[s] = Delete(r[s], v);
             }
@@ -91,11 +91,18 @@ class AVL{
         return Balance(s);
     }
 
-    int Get(int s, ll x) const {
+    int GetBig(int s, T x) const {
         if (!~s) return 0;
         if (x == tree[s]) return Size(r[s]);
-        if (x > tree[s]) return Get(r[s], x);
-        return Size(r[s]) + 1 + Get(l[s], x);
+        if (x > tree[s]) return GetBig(r[s], x);
+        return Size(r[s]) + 1 + GetBig(l[s], x);
+    }
+
+    int GetSmall(int s, T x) const {
+        if (!~s) return 0;
+        if (x == tree[s]) return Size(l[s]);
+        if (x < tree[s]) return GetSmall(l[s], x);
+        return Size(l[s]) + 1 + GetSmall(r[s], x);
     }
 
     vector<int> Dfs(int s) const {
@@ -109,14 +116,14 @@ class AVL{
     }
 
 public:
-    AVL(int s){
+    AVL<T>(int s){
         n = 0; root = -1;
         tree.resize(s); h.resize(s); sz.resize(s); l.resize(s); r.resize(s);
         for (int i = 0; i < s; i++) free.push(i);
     }
-    void Insert(ll x){ root = Insert(root, x); }
-    void Delete(ll x){ root = Delete(root, x); }
-    int Get(ll x) const { return Get(root, x); }
+    void Insert(T x){ root = Insert(root, x); }
+    void Delete(T x){ root = Delete(root, x); }
+    int Get(T l, T r) const { return n - GetSmall(root, l) - GetBig(root, r); }
 
     void Print() const {
         auto v = Dfs(root);
