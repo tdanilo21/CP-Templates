@@ -91,18 +91,32 @@ class AVL{
         return Balance(s);
     }
 
-    int GetBig(int s, T x) const {
+    bool Get(int s, T x) const {
         if (!~s) return 0;
-        if (x == tree[s]) return Size(r[s]);
-        if (x > tree[s]) return GetBig(r[s], x);
-        return Size(r[s]) + 1 + GetBig(l[s], x);
+        if (x == tree[s]) return 1;
+        if (x > tree[s]) return Get(r[s], x);
+        return Get(l[s], x);
     }
 
-    int GetSmall(int s, T x) const {
+    int CountBig(int s, T x) const {
+        if (!~s) return 0;
+        if (x == tree[s]) return Size(r[s]);
+        if (x > tree[s]) return CountBig(r[s], x);
+        return Size(r[s]) + 1 + CountBig(l[s], x);
+    }
+
+    int CountSmall(int s, T x) const {
         if (!~s) return 0;
         if (x == tree[s]) return Size(l[s]);
-        if (x < tree[s]) return GetSmall(l[s], x);
-        return Size(l[s]) + 1 + GetSmall(r[s], x);
+        if (x < tree[s]) return CountSmall(l[s], x);
+        return Size(l[s]) + 1 + CountSmall(r[s], x);
+    }
+
+    T* GetKth(int s, int k){
+        if (!~s) return nullptr;
+        if (k <= Size(l[s])) return GetKth(l[s], k);
+        if (k - Size(l[s]) == 1) return &tree[s];
+        return GetKth(r[s], k - Size(l[s]) - 1);
     }
 
     vector<int> Dfs(int s) const {
@@ -121,9 +135,13 @@ public:
         tree.resize(s); h.resize(s); sz.resize(s); l.resize(s); r.resize(s);
         for (int i = 0; i < s; i++) free.push(i);
     }
+    int Size() const { return n; }
     void Insert(T x){ root = Insert(root, x); }
     void Delete(T x){ root = Delete(root, x); }
-    int Get(T l, T r) const { return n - GetSmall(root, l) - GetBig(root, r); }
+    int CountSmaller(T x) const { return CountSmall(root, x); }
+    int CountBigger(T x) const { return CountBig(root, x); }
+    bool Inside(T x) const { return Get(root, x); }
+    T* GetKth(int k){ return GetKth(root, k); }
 
     void Print() const {
         auto v = Dfs(root);
