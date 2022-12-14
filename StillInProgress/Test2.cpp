@@ -29,317 +29,170 @@
 
 using namespace std;
 
-class segtree{
+struct Chain{
 
-    int n;
-    vector<ll> tree;
-
-    ll update(int s, int l, int r, int pos, ll x){
-        if (pos < l || pos > r) return tree[s];
-        if (l == r) return tree[s] = x;
-        int m = (l + r)>>1;
-        ll a = update(2*s, l, m, pos, x);
-        ll b = update(2*s+1, m+1, r, pos, x);
-        return tree[s] = max(a, b);
-    }
-
-    ll query(int s, int l, int r, int ql, int qr) const {
-        if (l > qr || r < ql) return 0;
-        if (l >= ql && r <= qr) return tree[s];
-        int m = (l + r)>>1;
-        ll a = query(2*s, l, m, ql, qr);
-        ll b = query(2*s+1, m+1, r, ql, qr);
-        return max(a, b);
-    }
-
-public:
-    void Assign(int s){
-        n = highpow(s);
-        if (bitcnt(s) > 1) n <<= 1;
-        tree.assign(2*n, 0);
-    }
-    void update(int pos, ll x){ update(1, 0, n-1, pos, x); }
-    ll query(int l, int r) const { return query(1, 0, n-1, l, r); }
-};
-
-class Tree{
-
-private:
-    int n, root;
-    vector<int> depth, in, out;
-    vector<vector<int> > g, par;
-    int _edges_ = 0;
-    bool _initialized_ = 0;
-
-    bool Valid(int s) const { return s >= 0 && s < n; }
-
-    int InitDfs(int s, int p = -1, int d = 0, int t = 0){
-        par[s][0] = p;
-        depth[s] = d;
-        in[s] = t;
-        for (int u : g[s])
-            if (u^p)
-                t = InitDfs(u, s, d+1, t+1);
-        return out[s] = ++t;
-    }
-
-    void Dfs(int s, int p, void bf(int, int), void af(int, int)) const {
-        bf(s, p);
-        for (int u : g[s])
-            if (u^p)
-                Dfs(u, s, bf, af);
-        af(s, p);
-    }
-
-public:
-    Tree(int n = 0){ Assign(n); }
-
-    void Assign(int n = 0){
-        this->n = n;
-        depth.assign(n, 0);
-        in.assign(n, 0);
-        out.assign(n, 0);
-        g.assign(n, vector<int>());
-        par.assign(n, vector<int>(lg(n)+1, -1));
-    }
-
-    void Edge(int u, int v){
-        if (!Valid(u) || !Valid(v)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        g[u].pb(v);
-        g[v].pb(u);
-        _edges_++;
-    }
-
-    void Read(int d = 1){
-        for (int i = 0; i < n-1; i++){
-            ri(u); ri(v);
-            u -= d; v -= d;
-            Edge(u, v);
-        }
-    }
-
-    void Initialize(int s = 0){
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        if (_edges_ < n-1){
-            cerr << "Tree is not connected" << endl;
-            exit(1);
-        }
-        if (_edges_ > n-1){
-            cerr << "Tree has cycle(s)" << endl;
-            exit(1);
-        }
-        root = s;
-        InitDfs(s);
-        for (int d = 1; d <= lg(n); d++)
-            for (int i = 0; i < n; i++)
-                if (depth[i] >= (1<<d))
-                    par[i][d] = par[par[i][d-1]][d-1];
-        _initialized_ = 1;
-    }
-
-    int Size() const { return n; }
-
-    int Depth(int s) const {
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        return depth[s];
-    }
-
-    int InTime(int s) const {
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        return in[s];
-    }
-
-    int OutTime(int s) const {
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        return out[s];
-    }
-
-    vector<int> GetAdjecent(int s) const {
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        return g[s];
-    }
-
-    vector<int> GetChilds(int s) const {
-        if (!Valid(s)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        vector<int> ch;
-        for (int u : g[s])
-            if (u^par[s][0])
-                ch.pb(u);
-        return ch;
-    }
-
-    int Par(int s, int d = 1) const {
-        if (!_initialized_){
-            cerr << "Tree has not been initialized yet" << endl;
-            exit(1);
-        }
-        if (d < 0 || d > depth[s]) return -1;
-        if (!d) return s;
-        return Par(par[s][lg(d)], d - highpow(d));
-    }
-
-    bool Ancestor(int s, int p) const {
-        if (!_initialized_){
-            cerr << "Tree has not been initialized yet" << endl;
-            exit(1);
-        }
-        return in[s] > in[p] && out[s] < out[p];
-    }
-
-    int Lca(int u, int v) const {
-        if (!Valid(u) || !Valid(v)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        if (!_initialized_){
-            cerr << "Tree has not been initialized yet" << endl;
-            exit(1);
-        }
-        if (depth[u] > depth[v]) swap(u, v);
-        if (Ancestor(v, u)) return u;
-        v = Par(v, depth[v] - depth[u]);
-        for (int d = lg(n); ~d; d--){
-            if (par[u][d] != par[v][d]){
-                u = par[u][d];
-                v = par[v][d];
-            }
-        }
-        return par[u][0];
-    }
-
-    int Dist(int u, int v) const {
-        if (!Valid(u) || !Valid(v)){
-            cerr << "Node index out of range" << endl;
-            exit(1);
-        }
-        if (!_initialized_){
-            cerr << "Tree has not been initialized yet" << endl;
-            exit(1);
-        }
-        int lca = Lca(u, v);
-        return 2*depth[lca] - depth[u] - depth[v];
-    }
-
-    void Dfs(void bf(int, int), void af(int, int)) const { Dfs(root, -1, bf, af); }
-};
-#define Empty [](int, int){}
-
-class HLD{
-
-    int n, m;
-    vector<vector<int> > g;
-    vector<int> path, idx, sz;
-    vector<segtree> st;
-    Tree tree;
-
-    int Size(int s, int p){
-        sz[s] = 1;
-        for (int u : g[s])
-            if (u^p)
-                sz[s] += Size(u, s);
-        return sz[s];
-    }
-
-    void dfs(int s, int p, int c, int i){
-        path[s] = c;
-        idx[s] = i;
-        int big = -1;
-        for (int u : g[s])
-            if (u^p && (!~big || sz[u] > sz[big]))
-                big = u;
-        dfs(big, s, c, i+1);
-        for (int u : g[s])
-            if (u^p && u^big)
-                dfs(u, s, m++, 0);
-        if (g[s].size() == 1 && ~p){
-            segtree seg; seg.Assign(i+1);
-            st.pb(seg);
-        }
-    }
-
-public:
-    void Assign(int s){
-        n = s; m = 0;
-        g.assign(n, vector<int>());
-        path.resize(n);
-        idx.resize(n);
-        sz.resize(n);
-        tree.Assign(n);
-    }
-    void edge(int u, int v){
-        g[u].pb(v);
-        g[v].pb(u);
-        tree.Edge(u, v);
-    }
-    void Compute(int root = 0){
-        Size(root, -1);
-        dfs(root, -1, m++, 0);
-        tree.Initialize(root);
-    }
-    void update(int s, ll x){ st[path[s]].update(idx[s], x); }
-    ll query(int u, int v) const {
-        if (tree.Depth(u) > tree.Depth(v)) swap(u, v);
-        if (!tree.Ancestor(v, u)){
-            int s = tree.Lca(u, v);
-            return max(query(s, u), query(s, v));
-        }
-        if (path[u] == path[v]) return st[path[u]].query(idx[u], idx[v]);
-        return st[path[v]].query(0, idx[v]) + query(u, tree.Par(v, idx[v]+1));
-    }
+    int n, u, v;
+    vector<ll> nodes, pre, suf;
 };
 
 const ll LINF = 4e18;
 const int mxN = 1e6+10, INF = 2e9;
-ll n, m, a[mxN];
-HLD hld;
+ll n, m, ans, a[mxN], deg[mxN], idx[mxN], c_in[mxN];
+vector<int> g[mxN], vbig;
+vector<vector<ll> > dist;
+bool erased[mxN], vis[mxN], big[mxN];
+vector<Chain> chains;
+
+void BFS(int S){
+
+    queue<int> q;
+    q.push(S);
+    dist[idx[S]][S] = 0;
+    while (q.size()){
+        int s = q.front(); q.pop();
+        for (int u : g[s]){
+            if (!erased[u] && !~dist[idx[S]][u]){
+                dist[idx[S]][u] = dist[idx[S]][s] + a[u];
+                ans += dist[idx[S]][u] * a[S];
+                q.push(u);
+            }
+        }
+    }
+}
+
+vector<int> stk;
+
+void InsertChain(){
+
+    if (stk.size() < 3) return;
+    chains.pb({});
+    auto c = &chains.back();
+    c->n = stk.size()-2;
+    c->u = stk[0];
+    c->v = stk.back();
+    for (int i = 0; i < c->n; i++)
+        c->nodes.pb(stk[i+1]);
+    c->pre.resize(c->n);
+    c->suf.resize(c->n);
+    c->pre[0] = a[c->nodes[0]];
+    for (int i = 1; i < c->n; i++)
+        c->pre[i] = c->pre[i-1] + a[c->nodes[i]] * (i+1);
+    c->suf[c->n-1] = a[c->nodes[c->n-1]];
+    for (int i = c->n-2; ~i; i--)
+        c->suf[i] = c->suf[i+1] + a[c->nodes[i]] * (c->n-i);
+    for (int i = 0; i < c->n; i++){
+        int s = c->nodes[i];
+        idx[s] = chains.size()-1;
+        c_in[s] = i;
+    }
+}
+
+void dfs(int s, int p, int S, bool first){
+
+    stk.pb(s);
+    vis[s] = 1;
+    if (big[s] && !first){
+        if (S <= s) InsertChain();
+        stk.pop_back();
+        return;
+    }
+    for (int u : g[s])
+        if (!erased[u] && u^p && (!vis[u] || u == S)) dfs(u, s, S, 0);
+    stk.pop_back();
+}
+
+void NewBig(int s){
+    idx[s] = vbig.size();
+    big[s] = 1;
+    vbig.pb(s);
+    dist.pb(vector<ll>(n, -1));
+    BFS(s);
+}
+
+int BS(int s, int i){
+
+    auto c = &chains[i];
+    int iu = idx[c->u], iv = idx[c->v];
+    int l = 0, r = c->n-1, ans = -1;
+    while (l <= r){
+        int k = (l + r + 1)>>1;
+        int x = c->nodes[k];
+        if (dist[iu][s] + dist[iu][x] < dist[iv][s] + dist[iv][x]){
+            l = k + 1;
+            ans = k;
+        }
+        else r = k - 1;
+    }
+    return ans;
+}
 
 void Solve(){
 
     cin >> n >> m;
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    hld.Assign(n);
-    for (int i = 0; i < n-1; i++){
+    for (int i = 0; i < m; i++){
         ri(u); ri(v);
         u--; v--;
-        hld.edge(u, v);
+        g[u].pb(v);
+        g[v].pb(u);
+        deg[u]++;
+        deg[v]++;
     }
+    queue<int> q;
+    for (int i = 0; i < n; i++){
+        a[i] = 1;
+        if (deg[i] == 1) q.push(i);
+    }
+    while (q.size()){
+        int s = q.front(); q.pop();
+        erased[s] = 1;
+        ans += 2*a[s]*(n-a[s]);
+        for (int u : g[s]){
+            if (!erased[u]){
+                deg[u]--;
+                a[u] += a[s];
+                if (deg[u] == 1) q.push(u);
+            }
+        }
+    }
+    memset(idx, -1, sizeof(idx));
     for (int i = 0; i < n; i++)
-        hld.update(i, a[i]);
-    while (m--){
-        ri(t); t--;
-        if (t){
-            ri(u); ri(v);
-            u--; v--;
-            cout << hld.query(u, v) << en;
-        }
-        else{
-            ri(s); rl(x);
-            s--;
-            hld.update(s, x);
+        if (!erased[i] && deg[i] > 2)
+            NewBig(i);
+    if (vbig.empty()){
+        for (int i = 0; i < n && vbig.empty(); i++)
+            if (!erased[i]) NewBig(i);
+    }
+    for (int s : vbig) dfs(s, -1, s, 1);
+    for (int i = 0; i < vbig.size(); i++){
+        cout << vbig[i] << ": "; pv(dist[i]);
+    }
+    cout << "Chains: \n";
+    for (int i = 0; i < chains.size(); i++){
+        cout << chains[i].n << sp << chains[i].u << sp << chains[i].v << en;
+        pv(chains[i].nodes);
+        pv(chains[i].pre);
+        pv(chains[i].suf);
+    }
+    for (int s = 0; s < n; s++){
+        if (!erased[s] && !big[s]){
+            for (int i = 0; i < chains.size(); i++){
+                ll sum = 0;
+                if (idx[s]^i){
+                    int j = BS(s, i);
+                    int iu = idx[chains[i].u], iv = idx[chains[i].v];
+                    if (~j) sum += dist[iu][s] * (j+1) + chains[i].pre[j];
+                    if (j < n-1) sum += dist[iv][s] * (chains[i].n - j - 1) + chains[i].suf[j+1];
+                }
+                else{
+                    int j = c_in[s];
+                    if (j) sum += chains[i].pre[j-1];
+                    if (j < n-1) sum += chains[i].suf[j+1];
+                }
+                ans += sum * a[s];
+            }
         }
     }
+    cout << ans << en;
 }
 
 int main(){
