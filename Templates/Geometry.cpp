@@ -2,7 +2,7 @@
 #define ld long double
 #define sp ' '
 #define en '\n'
-ll LINF = 1e18;
+ll LINF = 2e9;
 int sig(ll a){ return (!a ? 0 : (a<0 ? -1 : 1)); }
 ll gcd(ll a, ll b){ if (!b) return a; return gcd(b, a%b); }
 class Point{
@@ -18,31 +18,33 @@ public:
     ll operator|(const Point& a) const { return this->x * a.y - this->y * a.x; }
     static ll dist(const Point& a, const Point& b) { return abs(a.x - b.x) * abs(a.x - b.x) + abs(a.y - b.y) * abs(a.y - b.y); }
     static ll Manhattan(const Point& a, const Point& b) { return abs(a.x - b.x) + abs(a.y - b.y); }
-    // In Orientation a is center point from which we are watching.
-    static ll Orientation(const Point& a, const Point& b, const Point& c) { return sig(b.Norm(a)|c.Norm(a)); }
-    static ld Area(const Point* p, int n) { ld area = 0; for (int i = 0; i < n; i++) area += (p[(i+1) % n].x - p[i].x) * (p[i].y + p[(i+1) % n].y); return area / 2; }
-    bool OnSegment(const array<Point, 2>& p) const { return this->x <= max(p[0].x, p[1].x) && this->x >= min(p[0].x, p[1].x) && this->y <= max(p[0].y, p[1].y) && this->y >= min(p[0].y, p[1].y); }
+    // In Orientation this is center point from which we are watching.
+    int Orientation(const Point& a, const Point& b) const { return sig(a.Norm(*this)|b.Norm(*this)); }
+    static ll Area(const Point* p, int n) { ll area = 0; for (int i = 0; i < n; i++) area += p[i]|p[(i+1)%n]; return abs(area); }
+    bool OnSegment(const Point& p, const Point& q) const {
+        if (Orientation(p, q)) return 0;
+        return this->x <= max(p.x, q.x) && this->x >= min(p.x, q.x) && this->y <= max(p.y, q.y) && this->y >= min(p.y, q.y);
+    }
     static bool Intersect(const array<Point, 2>& p, const array<Point, 2>& q) {
-        int o1 = Point::Orientation(p[0], p[1], q[0]);
-        int o2 = Point::Orientation(p[0], p[1], q[1]);
-        int o3 = Point::Orientation(q[0], q[1], p[0]);
-        int o4 = Point::Orientation(q[0], q[1], p[1]);
+        int o1 = q[0].Orientation(p[0], p[1]);
+        int o2 = q[1].Orientation(p[0], p[1]);
+        int o3 = p[0].Orientation(q[0], q[1]);
+        int o4 = p[1].Orientation(q[0], q[1]);
         if (o1^o2 && o3^o4) return 1;
-        if (!o1 && q[0].OnSegment(p)) return 1;
-        if (!o2 && q[1].OnSegment(p)) return 1;
-        if (!o3 && p[0].OnSegment(q)) return 1;
-        if (!o4 && p[1].OnSegment(q)) return 1;
+        if (q[0].OnSegment(p[0], p[1])) return 1;
+        if (q[1].OnSegment(p[0], p[1])) return 1;
+        if (p[0].OnSegment(q[0], q[1])) return 1;
+        if (p[1].OnSegment(q[0], q[1])) return 1;
         return 0;
     }
-    bool Inside(const Point* p, int n) const { 
+    // Returns (0, 1, 2) -> (out, in, boundary)
+    int Inside(const Point* p, int n) const {
         Point extreme = Point(LINF, this->y);
         int cnt = 0;
         for (int i = 0; i < n; i++){
-            if (Point::Intersect({p[i], p[(i+1) % n]}, {*this, extreme})){
-                if (!Point::Orientation(p[i], p[(i+1) % n], *this))
-                    return OnSegment({p[i], p[(i+1) % n]});
-                cnt++;
-            }
+            if (OnSegment(p[i], p[(i+1) % n])) return 2;
+            if (p[i].x <= x && p[(i+1)%n].x > x && Orientation(p[i], p[(i+1)%n]) < 0) cnt++;
+            else if (p[(i+1)%n].x <= x && p[i].x > x && Orientation(p[(i+1)%n], p[i]) < 0) cnt++;
         }
         return cnt&1;
     }
