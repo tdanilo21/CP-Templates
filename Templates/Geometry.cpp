@@ -2,7 +2,7 @@
 #define ld long double
 #define sp ' '
 #define en '\n'
-ll LINF = 4e18;
+ll LINF = 1e18;
 int sig(ll a){ return (!a ? 0 : (a<0 ? -1 : 1)); }
 ll gcd(ll a, ll b){ if (!b) return a; return gcd(b, a%b); }
 class Point{
