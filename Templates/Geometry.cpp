@@ -2,7 +2,6 @@
 #define ld long double
 #define sp ' '
 #define en '\n'
-ll LINF = 2e9;
 int sig(ll a){ return (!a ? 0 : (a<0 ? -1 : 1)); }
 ll gcd(ll a, ll b){ if (!b) return a; return gcd(b, a%b); }
 class Point{
@@ -39,7 +38,6 @@ public:
     }
     // Returns (0, 1, 2) -> (out, in, boundary)
     int Inside(const Point* p, int n) const {
-        Point extreme = Point(LINF, this->y);
         int cnt = 0;
         for (int i = 0; i < n; i++){
             if (OnSegment(p[i], p[(i+1) % n])) return 2;
