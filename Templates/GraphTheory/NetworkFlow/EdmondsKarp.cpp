@@ -33,5 +33,5 @@ private:
 	}
 public:
 	EdmondsKarp() {};
-	EdmondsKarp(int n, int source, int sink) { this->par = *new vector<Edge*>(this->n); Initialize(n, source, sink); }
+	EdmondsKarp(int n, int source, int sink) { this->par = *new vector<Edge*>(n); Initialize(n, source, sink); }
 };
