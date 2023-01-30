@@ -15,7 +15,7 @@ struct Point{
     // Returns (-1, 0, 1) -> (cw, parallel, ccw)
     static int Orientation(const Point& a, const Point& b){ return sig(a | b); }
     bool OnSegment(const Point& a, const Point& b) const {
-        if (!Point::Orientation(vec(*this, a), vec(*this, b))) return 0;
+        if (Point::Orientation(vec(*this, a), vec(*this, b))) return 0;
         return x >= min(a.x, b.x) && x <= max(a.x, b.x)
             && y >= min(a.y, b.y) && y <= max(a.y, b.y);
     }
