@@ -21,12 +21,11 @@ struct Point{
     }
     // Returns (0, 1, 2) -> (don't intersect, do intersect, common point)
     static int Intersect(const array<Point, 2>& a, const array<Point, 2>& b){
-        array<int, 2> oa = {Point::Orientation(vec(a[0], a[1]), vec(a[0], b[0])), Point::Orientation(vec(a[0], a[1]), vec(a[0], b[1]))};
-        array<int, 2> ob = {Point::Orientation(vec(b[0], b[1]), vec(b[0], a[0])), Point::Orientation(vec(b[0], b[1]), vec(b[0], a[1]))};
-        if (oa[0] != oa[1] && ob[0] != ob[1]) return 1;
         if (a[0].OnSegment(b[0], b[1]) || a[1].OnSegment(b[0], b[1])
             || b[0].OnSegment(a[0], a[1]) || b[1].OnSegment(a[0], a[1])) return 2;
-        return 0;
+        array<int, 2> oa = {Point::Orientation(vec(a[0], a[1]), vec(a[0], b[0])), Point::Orientation(vec(a[0], a[1]), vec(a[0], b[1]))};
+        array<int, 2> ob = {Point::Orientation(vec(b[0], b[1]), vec(b[0], a[0])), Point::Orientation(vec(b[0], b[1]), vec(b[0], a[1]))};
+        return oa[0] != oa[1] && ob[0] != ob[1];
     }
     // Returns (0, 1, 2) -> (out, in, boundary)
     int Inside(const Point* p, int n) const {
