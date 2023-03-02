@@ -102,9 +102,7 @@ public:
         g.assign(n, {});
     }
 
-    void AddEdge(int u, int v){
-        g[u].pb(v);
-    }
+    void AddEdge(int u, int v){ g[u].pb(v); }
 
     vector<int> GetTree(int source = 0){
         vis.assign(n, 0);
