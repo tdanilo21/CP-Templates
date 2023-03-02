@@ -1,17 +1,20 @@
-#define pb push_back
-#define smin(a, b) a = min(a, b)
-class DominatorTree{
+#define pb push_back;
+class DominatorTreeSolver{
 
     int n;
-    vector<vector<int> > g, rg, G;
-    vector<int> in, rev, par, f, sdom, idom;
+    vector<vector<int> > g, rg;
+    vector<int> in, rev, par, f, best, sdom;
 
-    int initDfs(int s, int p = -1, int t = 0){
+    int initDfs(int s, int t = 0){
         in[s] = t; rev[t] = s;
-        par[s] = p;
-        for (int u : g[s])
-            if (!~in[u])
-                t = dfs(u, s, t);
+        sdom[t] = f[t] = best[t] = t;
+        for (int u : g[s]){
+            if (!~in[u]){
+                t = initDfs(u, t+1);
+                par[in[u]] = in[s];
+            }
+            rg[in[u]].pb(in[s]);
+        }
         return t;
     }
 
@@ -19,7 +22,8 @@ class DominatorTree{
         if (f[s] != s){
             int u = f[s];
             f[s] = Find(u);
-            smin(best[s], best[u]);
+            if (sdom[best[u]] < sdom[best[s]])
+                best[s] = best[u];
         }
         return f[s];
     }
@@ -31,32 +35,97 @@ class DominatorTree{
         rev.resize(n);
         par.assign(n, -1);
         f.resize(n);
-        sdom.assign(n, -1);
-        idom.assign(n, -1);
-        for (int i = 0; i < n; i++)
-            f[i] = i;
+        best.resize(n);
+        sdom.resize(n);
     }
 
 public:
 
-    DominatorTree(int n){ Assign(n); }
+    DominatorTreeSolver(int n = 0){ Assign(n); }
     void Assign(int s){
         n = s;
         g.resize(n);
         rg.resize(n);
-        G.resize(n);
+    }
+
+    void AddEdge(int u, int v){ g[u].pb(v); }
+
+    vector<int> GetTree(int source = 0){
+        Init();
+        initDfs(source);
+        vector<vector<int> > childs(n);
+        for (int s = 1; s < n; s++)
+            childs[par[s]].pb(s);
+        vector<vector<int> > bucket(n);
+        vector<int> idom(n, 0);
+        for (int s = n-1; ~s; s--){
+            for (int u : rg[s]){
+                Find(u);
+                smin(sdom[s], sdom[best[u]]);
+            }
+            bucket[sdom[s]].pb(s);
+            for (int u : bucket[s]){
+                Find(u);
+                if (sdom[u] == sdom[best[u]]) idom[u] = sdom[u];
+                else idom[u] = best[u];
+            }
+            if (s) for (int u : childs[s]) Unite(s, u);
+        }
+        vector<int> tpar(n, -1);
+        for (int s = 1; s < n; s++){
+            if (idom[s] != sdom[s]) idom[s] = idom[idom[s]];
+            tpar[rev[s]] = rev[idom[s]];
+        }
+        return tpar;
+    }
+};
+
+class DominatorTree{
+
+    int n;
+    vector<vector<int> > g;
+    vector<bool> vis;
+
+    void dfs(int s){
+        vis[s] = 1;
+        for (int u : g[s])
+            if (!vis[u]) dfs(u);
+    }
+
+public:
+
+    DominatorTree(int n = 0){ Assign(n); }
+
+    void Assign(int s){
+        n = s;
+        g.resize(n);
     }
 
     void AddEdge(int u, int v){
         g[u].pb(v);
-        rg[v].pb(u);
     }
 
-    vector<vector<int> > GetTree(int source){
-        Init();
-        initDfs(source);
-        for (int s = n-1; ~s; s--){
-
+    vector<int> GetTree(int source = 0){
+        vis.assign(n, 0);
+        dfs(source);
+        vector<int> visible_nodes;
+        for (int s = 0; s < n; s++)
+            if (vis[s]) visible_nodes.pb(s);
+        vector<int> mp(n), rmp(visible_nodes.size());
+        int m = 0;
+        for (int s : visible_nodes){
+            mp[s] = m;
+            rmp[m] = s;
+            m++;
         }
+        DominatorTreeSolver dts(m);
+        for (int s : visible_nodes)
+            for (int u : g[s])
+                if (vis[u]) dts.AddEdge(mp[s], mp[u]);
+        auto mpar = dts.GetTree(mp[source]);
+        vector<int> par(n, -1);
+        for (int i = 0; i < m; i++)
+            if (~mpar[i]) par[rmp[i]] = rmp[mpar[i]];
+        return par;
     }
 };
