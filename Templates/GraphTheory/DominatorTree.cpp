@@ -68,8 +68,7 @@ public:
                 else idom[u] = best[u];
             }
             if (s){
-                for (int u : childs[s])
-                    Unite(s, u);
+                for (int u : childs[s]) Unite(s, u);
                 childs[par[s]].pb(s);
             }
         }
@@ -124,8 +123,7 @@ public:
         auto mpar = dts.GetTree(mp[source]);
         vector<int> par(n, -1);
         for (int s = 0; s < m; s++)
-            if (~mpar[s])
-                par[rmp[s]] = rmp[mpar[s]];
+            if (~mpar[s]) par[rmp[s]] = rmp[mpar[s]];
         return par;
     }
 };
