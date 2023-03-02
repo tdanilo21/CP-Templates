@@ -44,8 +44,8 @@ public:
     DominatorTreeSolver(int n = 0){ Assign(n); }
     void Assign(int s){
         n = s;
-        g.resize(n);
-        rg.resize(n);
+        g.assign(n, {});
+        rg.assign(n, {});
     }
 
     void AddEdge(int u, int v){ g[u].pb(v); }
@@ -54,8 +54,6 @@ public:
         Init();
         initDfs(source);
         vector<vector<int> > childs(n);
-        for (int s = 1; s < n; s++)
-            childs[par[s]].pb(s);
         vector<vector<int> > bucket(n);
         vector<int> idom(n, 0);
         for (int s = n-1; ~s; s--){
@@ -69,7 +67,10 @@ public:
                 if (sdom[u] == sdom[best[u]]) idom[u] = sdom[u];
                 else idom[u] = best[u];
             }
-            if (s) for (int u : childs[s]) Unite(s, u);
+            if (s){
+                for (int u : childs[s]) Unite(s, u);
+                childs[par[s]].pb(s);
+            }
         }
         vector<int> tpar(n, -1);
         for (int s = 1; s < n; s++){
@@ -98,7 +99,7 @@ public:
 
     void Assign(int s){
         n = s;
-        g.resize(n);
+        g.assign(n, {});
     }
 
     void AddEdge(int u, int v){
