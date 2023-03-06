@@ -29,118 +29,101 @@
 
 using namespace std;
 
-class NetworkFlow{
+const ll LINF = 4e18;
 
-    struct Edge{
-        int from, to;
-        ll cap, flow, cost;
-        Edge* res;
+class implicit_segtree{
 
-        Edge(int from, int to, ll cap, ll cost){
-            this->from = from;
-            this->to = to;
-            this->cap = cap;
-            this->cost = cost;
+    ll L, R;
+    vector<ll> tree;
+    vector<array<int, 2> > ch;
+
+    int Node(){ tree.pb(-LINF); ch.pb({-1, -1}); return tree.size() - 1; }
+
+    int Ch(int s, int i){ if (!~ch[s][i]) ch[s][i] = Node(); return ch[s][i]; }
+
+    ll Val(int s){ return (!~s ? -LINF : tree[s]); }
+
+    void update(int s, ll l, ll r, ll pos, ll x){
+        //volim te<3
+        if (l == r){
+            smax(tree[s], x);
+            return;
         }
+        ll m = (l + r)>>1;
+        if (pos <= m) update(Ch(s, 0), l, m, pos, x);
+        else update(Ch(s, 1), m+1, r, pos, x);
+        tree[s] = max(Val(ch[s][0]), Val(ch[s][1]));
+    }
 
-        bool IsRes() const { return !cap; }
-        ll RemainingCap() const { return cap - flow; }
-        void Augment(ll bottleNeck){ flow += bottleNeck; res->flow -= bottleNeck; }
-    };
-
-    int n, source, sink, _VISITED_;
-    vector<vector<Edge*> > g;
-    vector<int> vis;
-    vector<Edge*> par;
-
-    void Visit(int s){ vis[s] = _VISITED_; }
-    bool Visited(int s) const { return vis[s] == _VISITED_; }
-    void ResetVis(){ _VISITED_++; }
-
-    array<ll, 2> Dijkstra(){
-        ResetVis();
-        vector<ll> dist(n, LONG_MAX);
-        priority_queue<array<ll, 3>,
-                vector<array<ll, 3> >,
-                greater<array<ll, 3> > > pq;
-        dist[source] = 0;
-        pq.push({0, LONG_MAX, source});
-        ll maxFlow = 0;
-        while (pq.size()){
-            auto [d, flow, s] = pq.top(); pq.pop();
-            if (Visited(s)) continue;
-            Visit(s);
-            for (auto e : g[s]){
-                if (e->RemainingCap() && d + e->cost < dist[e->to]){
-                    dist[e->to] = d + e->cost;
-                    par[e->to] = e;
-                    if (e->to == sink) maxFlow = min(flow, e->RemainingCap());
-                    pq.push({dist[e->to], min(flow, e->RemainingCap()), e->to});
-                }
-            }
-        }
-        return {dist[sink], maxFlow};
+    ll query(int s, ll l, ll r, ll ql, ll qr) const {
+        if (l > qr || r < ql || !~s) return -LINF;
+        if (l >= ql && r <= qr) return tree[s];
+        ll m = (l + r)>>1;
+        return min(query(ch[s][0], l, m, ql, qr), query(ch[s][1], m+1, r, ql, qr));
     }
 
 public:
-    void assign(int n, int source, int sink){
-        this->n = n;
-        this->source = source;
-        this->sink = sink;
-        _VISITED_ = 1;
-        g.assign(n, vector<Edge*>());
-        vis.assign(n, 0);
-        par.assign(n, nullptr);
+    implicit_segtree(ll l, ll r){ Assign(l, r); }
+
+    void Assign(ll l, ll r){
+        L = l; R = r;
+        Node();
     }
 
-    void AddEdge(int u, int v, ll cap, ll cost){
-        Edge *e = new Edge(u, v, cap, cost), *r = new Edge(v, u, 0, -cost);
-        e->res = r; r->res = e;
-        g[u].pb(e); g[v].pb(r);
-    }
+    void update(ll pos, ll x){ update(0, L, R, pos, x); }
 
-    ll MinCostMaxFlow(){
-        ll maxFlow = 0, minCost = 0;
-        while (1){
-            auto [cost, flow] = Dijkstra();
-            if (!flow) break;
-            int s = sink;
-            while (s != source){
-                par[s]->Augment(flow);
-                s = par[s]->from;
-            }
-            maxFlow += flow;
-            minCost += flow * cost;
-        }
-        return minCost;
-    }
+    ll query(ll r) const { return query(0, L, R, L, r); }
 };
 
-const ll LINF = 1e18;
+class segtree{
+
+    ll L, R;
+    vector<implicit_segtree> tree;
+    vector<array<int, 2> > ch;
+
+    int Node(){ tree.pb(implicit_segtree(L, R)); ch.pb({-1, -1}); return tree.size() - 1; }
+
+    int Ch(int s, int i){ if (!~ch[s][i]) ch[s][i] = Node(); return ch[s][i]; }
+
+    void update(int s, ll l, ll r, ll pos, ll x, ll y){
+        if (l > pos || r < pos) return;
+        tree[s].update(x, y);
+        if (l == r) return;
+        ll m = (l + r)>>1;
+        if (pos <= m) update(Ch(s, 0), l, m, pos, x, y);
+        else update(Ch(s, 1), m+1, r, pos, x, y);
+    }
+
+    bool Check(int s, ll x) const { if (!~s) return 0; return tree[s].query(x) >= x; }
+
+    ll Walk(int s, ll l, ll r, ll ql, ll qr, ll x) const {
+        if (!Check(s, x) || l > qr || r < ql) return -1;
+        if (l == r) return l;
+        ll m = (l + r)>>1;
+        ll y = Walk(ch[s][0], l, m, ql, qr, x);
+        if (~y) return y;
+        return Walk(ch[s][1], m+1, r, ql, qr, x);
+    }
+
+public:
+    segtree(ll l, ll r){ Assign(l, r); }
+
+    void Assign(ll l, ll r){
+        L = l; R = r;
+        Node();
+    }
+
+    void update(ll pos, ll x, ll y){ update(0, L, R, pos, x, y); }
+    ll Walk(ll l, ll r, ll x) const { return Walk(0, L, R, l, r, x); }
+};
+
 const int mxN = 1e6+10, INF = 2e9;
-ll n, m, a[mxN], b[mxN];
+ll n, m, a[mxN];
+segtree st[4];
+set<array<ll, 2> > s[4];
 
 void Solve(){
 
-    cin >> n;
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    vector<int> v;
-    for (int i = 0; i < n; i++){
-        ri(x); a[i] -= x;
-        if (a[i] < 0) v.pb(i);
-    }
-    NetworkFlow solver;
-    solver.assign(n+2, 0, n+1);
-    for (int i = 0, j = -1; i < n; i++){
-        if (a[i] <= 0) continue;
-        solver.AddEdge(0, i+1, a[i], 0);
-        while (j < v.size()-1 && v[j+1] < i) j++;
-        if (~j) solver.AddEdge(i+1, v[j]+1, a[i], i-v[j]);
-        if (j < v.size()-1) solver.AddEdge(i+1, v[j+1]+1, a[i], v[j+1]-i);
-    }
-    for (int i : v) solver.AddEdge(i+1, n+1, -a[i], 0);
-    cout << solver.MinCostMaxFlow() << en;
 }
 
 int main(){
