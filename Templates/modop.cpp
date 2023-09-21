@@ -4,7 +4,7 @@ class mll{
 
     ll v;
     void norm(){ v %= mod; if(v<0) v += mod; }
-    mll<mod> inv() const { return  *this ^ (mod-2); }
+    mll<mod> inv() const { return *this ^ (mod-2); }
     mll<mod> pow(const ll& exp) const {
         if (!exp) return 1;
         mll<mod> t = pow(exp/2);
@@ -15,22 +15,22 @@ class mll{
 
 public:
     mll<mod>(ll val = 0){ v = val; norm(); }
-    bool operator==(const mll<mod>& a) const { return v == a.v; }
-    bool operator!=(const mll<mod>& a) const { return v != a.v; }
-    bool operator<(const mll<mod>& a) const { return v < a.v; }
-    bool operator<=(const mll<mod>& a) const { return v <= a.v; }
-    bool operator>(const mll<mod>& a) const { return v > a.v; }
-    bool operator>=(const mll<mod>& a) const { return v >= a.v; }
+    bool operator==(const ll& a) const { return v == a; }
+    bool operator!=(const ll& a) const { return v != a; }
+    bool operator<(const ll& a) const { return v < a; }
+    bool operator<=(const ll& a) const { return v <= a; }
+    bool operator>(const ll& a) const { return v > a; }
+    bool operator>=(const ll& a) const { return v >= a; }
 
-    mll<mod> operator+(const mll<mod>& a) const { return mll<mod>(v+a.v); }
-    mll<mod> operator-(const mll<mod>& a) const { return mll<mod>(v-a.v); }
-    mll<mod> operator*(const mll<mod>& a) const { return mll<mod>(v*a.v); }
-    mll<mod> operator/(const mll<mod>& a) const { return *this * a.inv(); }
-    mll<mod> operator=(const mll<mod>& a) { v = a.v; norm(); return *this; }
-    mll<mod> operator+=(const mll<mod>& a) { v += a.v; norm(); return *this; }
-    mll<mod> operator-=(const mll<mod>& a) { v -= a.v; norm(); return *this; }
-    mll<mod> operator*=(const mll<mod>& a) { v *= a.v; norm(); return *this; }
-    mll<mod> operator/=(const mll<mod>& a) { v /= a.v; norm(); return *this; }
+    mll<mod> operator+(const ll& a) const { return mll<mod>(v+a); }
+    mll<mod> operator-(const ll& a) const { return mll<mod>(v-a); }
+    mll<mod> operator*(const ll& a) const { return mll<mod>(v*a); }
+    mll<mod> operator/(const ll& a) const { return *this * mll<mod>(a).inv(); }
+    mll<mod> operator=(const ll& a) { v = a; norm(); return *this; }
+    mll<mod> operator+=(const ll& a) { v += a; norm(); return *this; }
+    mll<mod> operator-=(const ll& a) { v -= a; norm(); return *this; }
+    mll<mod> operator*=(const ll& a) { v *= a; norm(); return *this; }
+    mll<mod> operator/=(const ll& a) { v /= a; norm(); return *this; }
     mll<mod> operator^(const ll& a) const { return pow(a); }
     mll<mod> operator^=(const ll& a) { v = pow(a).v; return *this; }
     mll<mod> operator++() { v++; return *this; }
@@ -38,8 +38,8 @@ public:
     mll<mod> operator--() { v--; return *this; }
     mll<mod> operator--(int) { mll<mod> temp = *this; v--; return temp; }
 
-    friend istream& operator>>(istream& is, mll<mod>& a){ is >> a.v; return is; }
-    friend ostream& operator<<(ostream& os, const mll<mod>& a){ os << a.v; return os; }
+    operator ll&() { return v; }
+    operator ll() const { return v; }
 
     static void init_fact(int mx){
         mll<mod>::fact.resize(mx+1);
@@ -50,8 +50,8 @@ public:
         mll<mod>::ifact[mx] = mll<mod>::fact[mx].inv();
         for (int i = mx-1; i > 1; i--) mll<mod>::ifact[i] = mll<mod>::ifact[i+1] * (i+1);
     }
-    static mll<mod> nck(const mll<mod>& n, const mll<mod>& k){ if (k>n) return 0; return mll<mod>::fact[n.v] * mll<mod>::ifact[k.v] * mll<mod>::ifact[(n-k).v]; }
-    static mll<mod> Fact(const mll<mod>& f){ if (f < 0) return LONG_MIN; return mll<mod>::fact[f.v]; }
+    static mll<mod> nck(const ll& n, const ll& k){ if (k>n) return 0; return mll<mod>::fact[n] * mll<mod>::ifact[k] * mll<mod>::ifact[(n-k)]; }
+    static mll<mod> Fact(const ll& f){ if (f < 0) return LONG_MIN; return mll<mod>::fact[f]; }
 };
 #define mod mll</*set your modulo*/>
 template<> vector<mod> mod::fact = vector<mod>();
