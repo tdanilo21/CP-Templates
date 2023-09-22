@@ -1,3 +1,4 @@
+#define smin(a, b) a = min(a, b)
 class EdmondsKarp : public NetworkFlowSolverBase {
     private:
         vector<Edge*> par;
