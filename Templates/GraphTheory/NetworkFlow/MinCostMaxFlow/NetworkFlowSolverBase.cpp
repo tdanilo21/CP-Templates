@@ -2,7 +2,7 @@
 #define pb push_back
 namespace NetworkFlow {
 
-  const ll LINF = 4e18;
+    const ll LINF = 4e18;
 
 	class Edge {
 	public:
@@ -32,8 +32,6 @@ namespace NetworkFlow {
 	class NetworkFlowSolverBase {
     private:
         map<ll, array<ll, 2> > ans;
-		int _VISITED_;
-		vector<int> vis;
 	protected:
 		int n, source, sink;
 		vector<vector<Edge*> > graph;
@@ -41,13 +39,8 @@ namespace NetworkFlow {
 			this->n = n;
 			this->source = source;
 			this->sink = sink;
-			this->vis = *new vector<int>(n, 0);
-			this->_VISITED_ = 0;
 			this->graph = *new vector<vector<Edge*> >(n, vector<Edge*>());
 		}
-		void Visit(int s){ this->vis[s] = this->_VISITED_; }
-		bool Visited(int s) const { return this->vis[s] == this->_VISITED_; }
-		void ResetVis(){ this->_VISITED_++; }
 	public:
 		void AddEdge(int from, int to, ll cap, ll cost = 0) {
 			if (cap < 0) {
