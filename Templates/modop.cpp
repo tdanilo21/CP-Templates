@@ -52,6 +52,7 @@ public:
     }
     static mll<mod> nck(const ll& n, const ll& k){ if (k>n) return 0; return mll<mod>::fact[n] * mll<mod>::ifact[k] * mll<mod>::ifact[(n-k)]; }
     static mll<mod> Fact(const ll& f){ if (f < 0) return LONG_MIN; return mll<mod>::fact[f]; }
+    static mll<mod> IFact(const ll& f){ if (f < 0) return LONG_MIN; return mll<mod>::ifact[f]; }
 };
 const ll MOD = /*set your modulo*/;
 #define mod mll<MOD>
