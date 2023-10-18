@@ -1,11 +1,12 @@
 class Tree{
 
+#define Empty [](int, int){}
 private:
     int n, root;
     vector<int> depth, in, out, sz;
     vector<vector<int> > g, par;
-    int _edges_ = 0;
-    bool _initialized_ = 0;
+    int _edges_;
+    bool _initialized_;
 
     bool Valid(int s) const { return s >= 0 && s < n; }
 
@@ -32,10 +33,11 @@ private:
     }
 
 public:
-    Tree(int n = 0){ Assign(n); }
+    Tree(int n = 1){ Assign(n); }
 
-    void Assign(int n = 0){
+    void Assign(int n = 1){
         this->n = n;
+        _edges_ = _initialized_ = 0;
         depth.assign(n, 0);
         in.assign(n, 0);
         out.assign(n, 0);
@@ -54,10 +56,10 @@ public:
         _edges_++;
     }
 
-    void Read(int d = 1){
+    void Read(){
         for (int i = 0; i < n-1; i++){
             ri(u); ri(v);
-            u -= d; v -= d;
+            u--; v--;
             Edge(u, v);
         }
     }
@@ -195,9 +197,8 @@ public:
             exit(1);
         }
         int lca = Lca(u, v);
-        return 2*depth[lca] - depth[u] - depth[v];
+        return depth[u] + depth[v] - 2*depth[lca];
     }
 
-    void Dfs(void bf(int, int), void af(int, int)) const { Dfs(root, -1, bf, af); }
+    void Dfs(void bf(int, int) = Empty, void af(int, int) = Empty) const { Dfs(root, -1, bf, af); }
 };
-#define Empty [](int, int){}
