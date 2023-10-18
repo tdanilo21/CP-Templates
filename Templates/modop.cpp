@@ -30,7 +30,7 @@ public:
     mll<mod> operator+=(const ll& a) { v += a; norm(); return *this; }
     mll<mod> operator-=(const ll& a) { v -= a; norm(); return *this; }
     mll<mod> operator*=(const ll& a) { v *= a; norm(); return *this; }
-    mll<mod> operator/=(const ll& a) { v /= a; norm(); return *this; }
+    mll<mod> operator/=(const ll& a) { v *= mll<mod>(a).inv(); norm(); return *this; }
     mll<mod> operator^(const ll& a) const { return pow(a); }
     mll<mod> operator^=(const ll& a) { v = pow(a).v; return *this; }
     mll<mod> operator++() { v++; return *this; }
