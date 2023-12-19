@@ -2,7 +2,7 @@
 #define pb push_back
 namespace NetworkFlow {
 
-   const ll LINF = 4e18;
+	const ll LINF = 4e18;
 
 	struct MCMFRes { ll minCost, maxFlow; };
 
