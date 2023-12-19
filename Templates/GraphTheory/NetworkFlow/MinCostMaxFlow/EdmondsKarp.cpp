@@ -2,7 +2,7 @@
 class EdmondsKarp : public NetworkFlowSolverBase {
     private:
         vector<Edge*> par;
-        array<ll, 2> Dijkstra(){
+        MCMFRes Dijkstra(){
             this->par.assign(this->n, nullptr);
             vector<ll> dist(this->n, LINF);
             priority_queue<array<ll, 3>,
@@ -25,7 +25,7 @@ class EdmondsKarp : public NetworkFlowSolverBase {
             }
             return {dist[this->sink], maxFlow};
         }
-        array<ll, 2> Solve(ll flowLimit) override {
+        MCMFRes Solve(ll flowLimit) override {
             ll minCost = 0, maxFlow = 0;
             while (maxFlow < flowLimit){
                 auto [cost, flow] = Dijkstra();
