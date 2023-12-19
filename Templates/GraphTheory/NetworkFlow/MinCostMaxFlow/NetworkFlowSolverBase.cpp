@@ -2,7 +2,9 @@
 #define pb push_back
 namespace NetworkFlow {
 
-    const ll LINF = 4e18;
+   const ll LINF = 4e18;
+
+	struct MCMFRes { ll minCost, maxFlow; };
 
 	class Edge {
 	public:
@@ -31,7 +33,7 @@ namespace NetworkFlow {
 
 	class NetworkFlowSolverBase {
     private:
-        map<ll, array<ll, 2> > ans;
+        map<ll, MCMFRes> ans;
 	protected:
 		int n, source, sink;
 		vector<vector<Edge*> > graph;
@@ -74,14 +76,13 @@ namespace NetworkFlow {
                         edges.pb(new Edge(*e));
 			return edges;
 		}
-		ll GetMaxFlow() { Execute(); return this->ans[LINF][1]; }
-		array<ll, 2> GetMinCostMaxFlow(ll flowLimit = LINF) { Execute(flowLimit); return this->ans[flowLimit]; }
+		ll GetMaxFlow() { Execute(); return this->ans[LINF].maxFlow; }
+		MCMFRes GetMinCostMaxFlow(ll flowLimit = LINF) { Execute(flowLimit); return this->ans[flowLimit]; }
 	private:
 		void Execute(ll flowLimit = LINF) {
 		    if (this->ans.count(flowLimit)) return;
-		    auto [minCost, maxFlow] = Solve(flowLimit);
-            this->ans[flowLimit] = {minCost, maxFlow};
+		    this->ans[flowLimit] = Solve(flowLimit);
         }
-		virtual array<ll, 2> Solve(ll flowLimit) = 0;
+		virtual MCMFRes Solve(ll flowLimit) = 0;
 	};
 }
