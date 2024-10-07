@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#pragma GCC target("popcnt")
 
 #define ll long long
 #define ld long double
