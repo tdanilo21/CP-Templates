@@ -28,7 +28,7 @@ class LiChao{
         if (!~s) return LINF;
         int m = (l + r)>>1;
         if (x <= m) return min(tree[s](x), Get(ch[s][0], l, m, x));
-        else return min(tree[s](x), Get(ch[s][1], m+1, r, x));
+        return min(tree[s](x), Get(ch[s][1], m+1, r, x));
     }
  
 public:
