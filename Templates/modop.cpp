@@ -56,5 +56,5 @@ public:
 };
 const ll _MOD_ = /*set your modulo*/;
 #define mint Mint<_MOD_>
-template<> vector<mod> mint::fact = vector<mint>();
-template<> vector<mod> mint::ifact = vector<mint>();
+template<> vector<mint> mint::fact = vector<mint>();
+template<> vector<mint> mint::ifact = vector<mint>();
