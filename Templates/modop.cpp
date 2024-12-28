@@ -6,6 +6,7 @@ class Mint{
     void norm(){ v %= mod; if(v<0) v += mod; }
     Mint<mod> inv() const { return *this ^ (mod-2); }
     Mint<mod> pow(const ll& exp) const {
+        if (exp < 0) return pow(-exp).inv();
         if (!exp) return 1;
         Mint<mod> t = pow(exp/2);
         if (exp%2) return t*t*v;
