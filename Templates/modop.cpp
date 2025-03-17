@@ -23,14 +23,14 @@ public:
     bool operator>(const ll& a) const { return v > a; }
     bool operator>=(const ll& a) const { return v >= a; }
 
-    Mint<mod> operator+(const ll& a) const { return Mint<mod>(v+a); }
-    Mint<mod> operator-(const ll& a) const { return Mint<mod>(v-a); }
-    Mint<mod> operator*(const ll& a) const { return Mint<mod>(v*a); }
+    Mint<mod> operator+(const ll& a) const { return Mint<mod>(v+(a%mod)); }
+    Mint<mod> operator-(const ll& a) const { return Mint<mod>(v-(a%mod)); }
+    Mint<mod> operator*(const ll& a) const { return Mint<mod>(v*(a%mod)); }
     Mint<mod> operator/(const ll& a) const { return *this * Mint<mod>(a).inv(); }
     Mint<mod> operator=(const ll& a) { v = a; norm(); return *this; }
-    Mint<mod> operator+=(const ll& a) { v += a; norm(); return *this; }
-    Mint<mod> operator-=(const ll& a) { v -= a; norm(); return *this; }
-    Mint<mod> operator*=(const ll& a) { v *= a; norm(); return *this; }
+    Mint<mod> operator+=(const ll& a) { v += (a%mod); norm(); return *this; }
+    Mint<mod> operator-=(const ll& a) { v -= (a%mod); norm(); return *this; }
+    Mint<mod> operator*=(const ll& a) { v *= (a%mod); norm(); return *this; }
     Mint<mod> operator/=(const ll& a) { v *= Mint<mod>(a).inv(); norm(); return *this; }
     Mint<mod> operator^(const ll& a) const { return pow(a); }
     Mint<mod> operator^=(const ll& a) { v = pow(a).v; return *this; }
